@@ -1,0 +1,14 @@
+assets/*
+!assets/.gitignore
+adm/assets/*
+!adm/assets/.gitignore
+protected/web/runtime/*
+!protected/web/runtime/.gitignore
+protected/adm/runtime/*
+!protected/adm/runtime/.gitignore
+protected/data/*.db
+uploads/*
+!uploads/.gitignore
+config/*
+!config/.gitignore
+*.log

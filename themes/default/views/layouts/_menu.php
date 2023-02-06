@@ -1,0 +1,97 @@
+<?php
+$controller = Yii::app()->controller->id;
+$action     = strtolower(Yii::app()->controller->action->id);
+?>
+<div class="space_20"></div>
+<div id="main_menu">
+    <div class="top-menu no-mar">
+        <div id="top_nav" class="container">
+            <ul class="col-lg-12 col-md-12 level-1 no-pad">
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/index'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'index') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'homepage'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/about'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'about') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'about'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/news'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'news') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'news'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/publications'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'publications') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'publications'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/interactive'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'interactive') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'interactive'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/educate'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'educate') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'educate'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/course'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'course') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'course'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/faq'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'faq') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'faq'); ?></a>
+                </li>
+                <li>
+                    <a href="<?= Yii::app()->controller->createUrl('site/contact'); ?>" title="" class="parent <?= ($controller == 'site' && $action == 'contact') ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'contact'); ?></a>
+                </li>
+                <li class="" style="display: none;">
+                    <a href="#" title="" class="parent <?= ($controller == 'products' && ($action == 'index' || $action == 'detail')) ? 'active' : ''; ?>"><?= Yii::t('web/full_home', 'product'); ?></a>
+                    <ul>
+                        <li class="sub_menu">
+                            <?php
+                            if ($controller == 'products') {
+                                $root = Yii::app()->params->upload_dir_path;
+                            } else {
+                                $root = Yii::app()->params->upload_dir;
+                            }
+                            $sub_menu_2 = WCategories::getParentCategories();
+                            if ($sub_menu_2) :
+                                foreach ($sub_menu_2 as $level_2) :
+                            ?>
+                                    <div class='col-md-3'>
+                                        <div class="item">
+                                            <a href="<?= Yii::app()->controller->createUrl('products/index', array('id' => $level_2->id)); ?>" class="level-2">
+                                                <img src="<?= $root . $level_2->icon; ?>" alt="" class="icon">
+                                                <?= CHtml::encode($level_2->name); ?>
+                                            </a>
+                                            <ul class='dropdown-inner-list'>
+                                                <?php
+                                                $sub_menu_3 = WCategories::getCategoriesByParentId($level_2->id);
+                                                if ($sub_menu_3) :
+                                                    foreach ($sub_menu_3 as $level_3) :
+                                                        $sub_menu_4 = WCategories::getCategoriesByParentId($level_3->id);
+                                                ?>
+                                                        <li>
+                                                            <a href="<?= Yii::app()->controller->createUrl('products/index', array('id' => $level_3->id)); ?>" class="font_14 white" title="">
+                                                                <?= CHtml::encode($level_3->name); ?>
+                                                                <?php if ($sub_menu_4) : ?>
+                                                                    <img src="<?= Yii::app()->theme->baseUrl ?>/images/arrow.png" alt="" class="arrow">
+                                                                <?php endif; ?>
+                                                            </a>
+                                                        </li>
+                                                        <?php
+                                                        if ($sub_menu_4) :
+                                                            foreach ($sub_menu_4 as $level_4) :
+                                                        ?>
+                                                                <li>
+                                                                    <a href="<?= Yii::app()->controller->createUrl('products/index', array('id' => $level_4->id)); ?>" class="font_13 gray" title="">
+                                                                        <span class="red mar_left_10">+</span>
+                                                                        <?= CHtml::encode($level_4->name); ?>
+                                                                    </a>
+                                                                </li>
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

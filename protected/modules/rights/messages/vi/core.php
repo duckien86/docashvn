@@ -16,4 +16,8 @@ return array (
     'Relations' => 'Quan hệ',
     'Cancel' => 'Quay lại',
     'A descriptive name for this item.' => 'Đặt tên hiển thị',
+    'Assignments' => 'Phân quyền',
+    'Permissions' => 'Phân nhóm quyền',
+    'Roles' => 'Nhóm quyền',
+    'Manage User' => 'Tài khoản hệ thống',
 );

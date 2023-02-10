@@ -49,16 +49,21 @@ return false;
 'id'=>'<?php echo $this->class2id($this->modelClass); ?>-grid',
 'dataProvider'=>$model->search(),
 'filter'=>$model,
+'itemsCssClass' => 'table table-bordered table-striped table-hover jambo_table responsive-utilities',
 'columns'=>array(
 <?php
+
+
 $count = 0;
 foreach ($this->tableSchema->columns as $column) {
-	if (++$count == 7)
-		echo "\t\t/*\n";
-	echo "\t\t'" . $column->name . "',\n";
+	$templateColumn =  [
+		'name'        => $column->name,
+		'type'        => 'raw',
+		'htmlOptions' => ['style' => 'width:150px;word-break: break-word;vertical-align:middle;'],
+	];
+
+	echo "\t\t" . var_export($templateColumn) . ",\n";
 }
-if ($count >= 7)
-	echo "\t\t*/\n";
 ?>
 array(
 'class'=>'booster.widgets.TbButtonColumn',

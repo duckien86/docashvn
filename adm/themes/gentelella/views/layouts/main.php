@@ -1,42 +1,43 @@
 <?php
-    $cs        = Yii::app()->clientScript;
-    $themePath = Yii::app()->theme->baseUrl;
+$cs        = Yii::app()->clientScript;
+$themePath = Yii::app()->theme->baseUrl;
 
-    /**
-     * StyleSHeets
-     */
-    //Bootstrap core CSS
-    $cs->registerCssFile($themePath . '/css/bootstrap.min.css');
-    $cs->registerCssFile($themePath . '/fonts/css/font-awesome.min.css');
-    $cs->registerCssFile($themePath . '/css/animate.min.css');
+/**
+ * StyleSHeets
+ */
+//Bootstrap core CSS
+$cs->registerCssFile($themePath . '/css/bootstrap.min.css');
+$cs->registerCssFile($themePath . '/fonts/css/font-awesome.min.css');
+$cs->registerCssFile($themePath . '/css/animate.min.css');
 
-    //Custom styling plus plugins
-    $cs->registerCssFile($themePath . '/css/custom.css');
-    $cs->registerCssFile($themePath . '/css/icheck/flat/green.css');
+//Custom styling plus plugins
+$cs->registerCssFile($themePath . '/css/custom.css');
+$cs->registerCssFile($themePath . '/css/icheck/flat/green.css');
 
-    //calendar
-    $cs->registerCssFile($themePath . '/css/calendar/fullcalendar.css');
+//calendar
+$cs->registerCssFile($themePath . '/css/calendar/fullcalendar.css');
 
-    $cs->registerCssFile($themePath . '/css/main.css');
+$cs->registerCssFile($themePath . '/css/main.css');
 
-    /**
-     * JavaScripts
-     */
-    $cs->registerCoreScript('jquery', CClientScript::POS_HEAD);
+/**
+ * JavaScripts
+ */
+$cs->registerCoreScript('jquery', CClientScript::POS_HEAD);
 
-    //bootstrap progress js
-    $cs->registerScriptFile($themePath . '/js/progressbar/bootstrap-progressbar.min.js', CClientScript::POS_END);
-    $cs->registerScriptFile($themePath . '/js/nicescroll/jquery.nicescroll.min.js', CClientScript::POS_END);
+//bootstrap progress js
+$cs->registerScriptFile($themePath . '/js/progressbar/bootstrap-progressbar.min.js', CClientScript::POS_END);
+$cs->registerScriptFile($themePath . '/js/nicescroll/jquery.nicescroll.min.js', CClientScript::POS_END);
 
-    //icheck
-    $cs->registerScriptFile($themePath . '/js/icheck/icheck.min.js', CClientScript::POS_END);
-    $cs->registerScriptFile($themePath . '/js/custom.js', CClientScript::POS_END);
-    //calendar
-    $cs->registerScriptFile($themePath . '/js/moment.min.js', CClientScript::POS_END);
-    $cs->registerScriptFile($themePath . '/js/calendar/fullcalendar.min.js', CClientScript::POS_END);
+//icheck
+$cs->registerScriptFile($themePath . '/js/icheck/icheck.min.js', CClientScript::POS_END);
+$cs->registerScriptFile($themePath . '/js/custom.js', CClientScript::POS_END);
+//calendar
+$cs->registerScriptFile($themePath . '/js/moment.min.js', CClientScript::POS_END);
+$cs->registerScriptFile($themePath . '/js/calendar/fullcalendar.min.js', CClientScript::POS_END);
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <!-- Meta, title, CSS, favicons, etc. -->
@@ -53,49 +54,51 @@
 
 <body class="nav-md">
 
-<div class="container body">
-    <div class="main_container">
-        <?php
+    <div class="container body">
+        <div class="main_container">
+            <?php
             $this->beginContent('//layouts/left_col');
             $this->endContent();
-        ?>
+            ?>
 
-        <!-- top navigation -->
-        <?php
+            <!-- top navigation -->
+            <?php
             $this->beginContent('//layouts/top_nav');
             $this->endContent();
-        ?>
-        <!-- /top navigation -->
+            ?>
+            <!-- /top navigation -->
 
-        <!-- page content -->
-        <div class="right_col" role="main">
-            <div class="">
-                <?php if (isset($this->breadcrumbs)): ?>
-                    <?php
-                    $this->widget('zii.widgets.CBreadcrumbs', array(
-                        'links' => $this->breadcrumbs,
-                    ));
-                    ?><!-- breadcrumbs -->
-                <?php endif ?>
-                <?php $this->widget('booster.widgets.TbAlert'); ?>
-                <?php echo $content; ?>
-            </div>
-
-            <footer>
+            <!-- page content -->
+            <div class="right_col" role="main">
                 <div class="">
-                    <p>Design by kien.nduc@gmail.com  - 0914590029</p>
-                    <p class="pull-right">Copyright &copy; <?php echo date('Y'); ?>
-                        by <?php echo CHtml::encode(Yii::app()->name); ?>. All Rights Reserved.
-                        <!--                        | <span class="lead"> <i class="fa fa-paw"></i> -->
-                        <?php //echo Yii::powered(); ?><!--</span>-->
-                    </p>
+                    <?php if (isset($this->breadcrumbs)) : ?>
+                        <?php
+                        $this->widget('zii.widgets.CBreadcrumbs', array(
+                            'links' => $this->breadcrumbs,
+                        ));
+                        ?><!-- breadcrumbs -->
+                    <?php endif ?>
+                    <?php $this->widget('booster.widgets.TbAlert'); ?>
+                    <?php echo $content; ?>
                 </div>
-            </footer>
-            <!-- footer -->
+
+                <footer>
+                    <div class="">
+                        <p>Design by kien.nduc@gmail.com - 0914590029</p>
+                        <p class="pull-right">Copyright &copy; <?php echo date('Y'); ?>
+                            by <?php echo CHtml::encode(Yii::app()->name); ?>. All Rights Reserved.
+                            <!--                        | <span class="lead"> <i class="fa fa-paw"></i> -->
+                            <?php //echo Yii::powered(); 
+                            ?><!--</span>-->
+                        </p>
+                    </div>
+                </footer>
+                <!-- footer -->
+            </div>
+            <!-- /page content -->
         </div>
-        <!-- /page content -->
     </div>
-</div>
-<!-- page -->
+    <!-- page -->
 </body>
+
 </html>

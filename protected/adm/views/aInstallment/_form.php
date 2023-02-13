@@ -3,252 +3,212 @@
 /* @var $model AInstallment */
 /* @var $form CActiveForm */
 ?>
-<div class="container-fluid">
 
-	<div class="form-horizontal form-label-left">
 
-		<?php $form=$this->beginWidget('booster.widgets.TbActiveForm', array(
+<?php $form=$this->beginWidget('booster.widgets.TbActiveForm', array(
 	'id'=>'ainstallment-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
 	'enableAjaxValidation'=>true,
-)); ?>
+	'htmlOptions' => ['class' => 'form-horizontal form-label-left'],
+	)); ?>
 
-		<p class="note">Fields with <span class="required">*</span> are required.</p>
+<p class="note">Fields with <span class="required">*</span> are required.</p>
 
-		<?php echo $form->errorSummary($model); ?>
+<?php echo $form->errorSummary($model); ?>
 
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'shop_id',array (
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'shop_id',array (
   'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
 )); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'shop_id',array (
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'shop_id',array (
   'class' => 'form-control col-md-7 col-xs-12',
 )); ?>
-				</div>
-				<?php echo $form->error($model,'shop_id'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'create_by',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'create_by',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'create_by'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'customer_name',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'customer_name',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'customer_name'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'phone_number',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'phone_number',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'phone_number'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'address',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'address',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'address'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'personal_id',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'personal_id',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'personal_id'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'total_money',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'total_money',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'total_money'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'receive_money',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'receive_money',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'receive_money'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'loan_date',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'loan_date',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'loan_date'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'frequency',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'frequency',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'frequency'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'is_before',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'is_before',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'is_before'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'start_date',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'start_date',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'start_date'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'create_date',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'create_date',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'create_date'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'note',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'note',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'note'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'manage_by',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'manage_by',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'manage_by'); ?>
-			</div>
-
-					<div class="form-group">
-				<!-- <div class="col-md-2 col-sm-6 col-xs-12"> -->
-				<?php echo $form->labelEx($model,'status',array (
-  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
-)); ?>
-				<!-- </div> -->
-				<div class="col-md-6 col-sm-6 col-xs-12">
-					<?php echo $form->textField($model,'status',array (
-  'class' => 'form-control col-md-7 col-xs-12',
-)); ?>
-				</div>
-				<?php echo $form->error($model,'status'); ?>
-			</div>
-
-				<div class="form-group buttons">
-			<?php echo CHtml::submitButton($model->isNewRecord ? 'Tạo mới' : 'Lưu lại',['class'=>'btn btn-primary']); ?>
 		</div>
+		<?php echo $form->error($model,'shop_id'); ?>
+	</div>
 
-		<?php $this->endWidget(); ?>
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'create_by',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'create_by',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'create_by'); ?>
+	</div>
 
-	</div><!-- form -->
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'customer_name',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'customer_name',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'customer_name'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'phone_number',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'phone_number',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'phone_number'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'address',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'address',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'address'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'personal_id',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'personal_id',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'personal_id'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'total_money',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'total_money',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'total_money'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'receive_money',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'receive_money',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'receive_money'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'loan_date',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'loan_date',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'loan_date'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'frequency',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'frequency',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'frequency'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'is_before',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'is_before',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'is_before'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'start_date',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'start_date',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'start_date'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'create_date',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'create_date',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'create_date'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'note',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'note',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'note'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'manage_by',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'manage_by',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'manage_by'); ?>
+	</div>
+
+	<div class="form-group">
+		<?php echo $form->labelEx($model,'status',array (
+  'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
+)); ?>
+		<div class="col-md-6 col-sm-6 col-xs-12">
+			<?php echo $form->textField($model,'status',array (
+  'class' => 'form-control col-md-7 col-xs-12',
+)); ?>
+		</div>
+		<?php echo $form->error($model,'status'); ?>
+	</div>
+
+<div class="form-group buttons">
+	<?php echo CHtml::submitButton($model->isNewRecord ? 'Tạo mới' : 'Lưu lại',['class'=>'btn btn-primary']); ?>
 </div>
+
+<?php $this->endWidget(); ?>

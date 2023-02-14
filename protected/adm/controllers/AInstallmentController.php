@@ -64,6 +64,12 @@ class AInstallmentController extends Controller
     /**
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * TODO: 
+     * 1. Lấy dữ liệu của shop
+     * 2. Lấy dữ liệu người xử lý bát họ
+     * 3. Thêm chức năng thu tiền
+     * 4. Khi tạo mới 1 hợp đồng cần kiểm tra có đủ tiền hay không?
+     * 
      */
     public function actionCreate()
     {

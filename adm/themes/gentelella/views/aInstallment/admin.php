@@ -7,9 +7,6 @@ $this->breadcrumbs = array(
 	'Manage',
 );
 
-$this->menu = array(
-	array('label' => 'Tạo mới AInstallment', 'url' => array('create')),
-);
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -25,16 +22,25 @@ return false;
 ");
 ?>
 
-<h1>Quản lý Ainstallments</h1>
+<h4>Hợp đồng vay họ</h4>
 
-<?php echo CHtml::link('Advanced Search', '#', array('class' => 'search-button')); ?>
+
+<?php //echo CHtml::link('Advanced Search', '#', array('class' => 'search-button')); 
+?>
 <div class="search-form" style="display:none">
 	<?php $this->renderPartial('_search', array(
 		'model' => $model,
 	)); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('booster.widgets.TbGridView', array(
+<?php
+echo CHtml::button('Tạo mới', array(
+	'data-toggle' => 'modal',
+	'data-target' => '#modal-id',
+	'class' => 'btn btn-primary btn-sm',
+));
+
+$this->widget('booster.widgets.TbGridView', array(
 	'id' => 'ainstallment-grid',
 	'dataProvider' => $model->search(),
 	// 'filter' => $model,
@@ -182,4 +188,75 @@ return false;
 			'htmlOptions' => array('nowrap' => 'nowrap', 'style' => 'width:100px;text-align:center;vertical-align:middle;padding:10px'),
 		),
 	),
-)); ?>
+));
+?>
+<!-- modal create new -->
+<?php
+$this->beginWidget(
+	'booster.widgets.TbModal',
+	array(
+		'id' => 'modal-id',
+		'fade' => true,
+		'options' => ['backdrop' => 'static', 'keyboard' => false],
+		'htmlOptions' => [
+			// 'class' => 'modal-dialog modal-dialog-centered'
+		]
+	)
+); ?>
+<div class="modal-header">
+	<a class="close" data-dismiss="modal">&times;</a>
+	<h3 class="text-center">Tạo hợp đồng vay họ</h3>
+</div>
+<div class="modal-body">
+	<div id="body-content">
+		<?php echo $this->renderPartial('_form', array(
+			'model' => $model,
+		));
+		?>
+	</div>
+	<div class="space_30"></div>
+	<div class="pull-right">
+		<?= CHtml::link(Yii::t('web/portal', 'close'), '#', array('class' => 'btn btn_green', 'data-dismiss' => 'modal')) ?>
+	</div>
+	<div class="space_1"></div>
+</div>
+<?php $this->endWidget(); ?>
+<!-- // end modal create new -->
+<script>
+	$(document).ready(function() {
+		// nếu sử dụng qua modal cần phải gọi lại hàm này. 
+		// để daterangepicker(0) được gọi lên 
+		$("#modal-id").on('shown.bs.modal', function() {
+			$('.datepicker').daterangepicker({
+				singleDatePicker: true, // Nếu sử dụng from - to date thì set: false
+				showDropdowns: false,
+				// timePicker: true,
+				timePickerIncrement: 5,
+				format: 'DD/MM/YYYY',
+				buttonClasses: ['btn btn-default'],
+				applyClass: 'btn-small btn-primary',
+				cancelClass: 'btn-small',
+				locale: {
+					applyLabel: 'Áp dụng',
+					cancelLabel: 'Đóng',
+					daysOfWeek: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
+					monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
+					firstDay: 1
+				}
+			}, function() {});
+		});
+
+	});
+</script>
+<style>
+	.daterangepicker {
+		/* set lại index để datepicker ko bị ẩn sau modal */
+		z-index: 9999 !important;
+	}
+</style>
+
+<style>
+	.modal-dialog {
+		width: 700px;
+	}
+</style>

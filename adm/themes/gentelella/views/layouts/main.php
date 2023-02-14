@@ -32,8 +32,10 @@ $cs->registerScriptFile($themePath . '/js/nicescroll/jquery.nicescroll.min.js', 
 $cs->registerScriptFile($themePath . '/js/icheck/icheck.min.js', CClientScript::POS_END);
 $cs->registerScriptFile($themePath . '/js/custom.js', CClientScript::POS_END);
 //calendar
-$cs->registerScriptFile($themePath . '/js/moment.min.js', CClientScript::POS_END);
-$cs->registerScriptFile($themePath . '/js/calendar/fullcalendar.min.js', CClientScript::POS_END);
+// $cs->registerScriptFile($themePath . '/js/moment.min.js', CClientScript::POS_HEAD);
+// $cs->registerScriptFile($themePath . '/js/calendar/fullcalendar.min.js', CClientScript::POS_HEAD);
+$cs->registerScriptFile($themePath . '/js/moment.min2.js', CClientScript::POS_HEAD);
+$cs->registerScriptFile($themePath . '/js/datepicker/daterangepicker.js', CClientScript::POS_HEAD);
 ?>
 <!DOCTYPE html>
 <html>
@@ -84,13 +86,7 @@ $cs->registerScriptFile($themePath . '/js/calendar/fullcalendar.min.js', CClient
 
                 <footer>
                     <div class="">
-                        <p>Design by kien.nduc@gmail.com - 0914590029</p>
-                        <p class="pull-right">Copyright &copy; <?php echo date('Y'); ?>
-                            by <?php echo CHtml::encode(Yii::app()->name); ?>. All Rights Reserved.
-                            <!--                        | <span class="lead"> <i class="fa fa-paw"></i> -->
-                            <?php //echo Yii::powered(); 
-                            ?><!--</span>-->
-                        </p>
+                        <!-- <p>Design by kien.nduc@gmail.com - 0914590029</p> -->
                     </div>
                 </footer>
                 <!-- footer -->

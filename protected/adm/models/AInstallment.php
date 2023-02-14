@@ -61,10 +61,10 @@ class AInstallment extends Installment
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id' => 'Mã HĐ',
 			'shop_id' => 'Shop',
 			'create_by' => 'Nhân viên',
-			'customer_name' => 'Khách hàng',
+			'customer_name' => 'Tên khách hàng',
 			'phone_number' => 'Điện thoại',
 			'address' => 'Địa chỉ',
 			'personal_id' => 'Số CMND/Hộ Chiếu',

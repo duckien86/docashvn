@@ -67,20 +67,29 @@ class AInstallmentController extends Controller
      */
     public function actionCreate()
     {
-        $model = new AInstallment;
+        $response = ['data' => null, 'error' => null];
+        $installment = new AInstallment;
 
         // Uncomment the following line if AJAX validation is needed
-        $this->performAjaxValidation($model);
+        // $this->performAjaxValidation($installment);
 
         if (isset($_POST['AInstallment'])) {
-            $model->attributes = $_POST['AInstallment'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
-        }
+            $installment->attributes = $_POST['AInstallment'];
+            $installment->total_money = str_replace('.', '', $installment->total_money);
+            $installment->receive_money = str_replace('.', '', $installment->receive_money);
+            $installment->start_date =  Utils::converstDate('d/m/Y', 'Y-m-d', $installment->start_date);
+            $installment->shop_id = '12';
+            $installment->create_date = date('Y-m-d H:i:s');
+            $installment->create_by = Yii::app()->user->id;
 
-        $this->render('create', array(
-            'model' => $model,
-        ));
+            if ($installment->save()) {
+                $installment->generateItems();
+            } else {
+                $response['error'] = CHtml::errorSummary($installment);
+            }
+        }
+        echo CJSON::encode($response);
+        Yii::app()->end();
     }
 
     /**

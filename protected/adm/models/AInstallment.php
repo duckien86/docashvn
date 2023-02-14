@@ -116,6 +116,7 @@ class AInstallment extends Installment
 		$criteria->compare('note', $this->note, true);
 		$criteria->compare('manage_by', $this->manage_by, true);
 		$criteria->compare('status', $this->status);
+		$criteria->order = 'create_date desc';
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
@@ -131,5 +132,41 @@ class AInstallment extends Installment
 	public static function model($className = __CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function genContractId()
+	{
+		$prefix = 'BH';
+	}
+
+	/**
+	 * Tính chi tiết số tiền và ngày phải đóng
+	 * 
+	 */
+	public function generateItems()
+	{
+		$dataItem = [
+			'installment_id' => null,
+			'payment_date' => null,
+			'amount' => null,
+		];
+
+		// prepare data
+		if ($this->loan_date > 0) {
+			$amount = $this->total_money / $this->loan_date;
+			for ($i = 0; $i < $this->loan_date; $i++) {
+				$dataItem['installment_id'] = $this->id;
+				$dataItem['payment_date'] = date('Y-m-d', strtotime($this->start_date) + $i * 24 * 60 * 60);
+				$dataItem['amount'] = $amount;
+				$dataInsert[] = $dataItem;
+			}
+		}
+
+		$build = new CDbCommandBuilder(Yii::app()->db->schema);
+		$command = $build->createMultipleInsertCommand('tbl_installment_items', $dataInsert);
+		if ($command->execute()) {
+			return true;
+		}
+		return false;
 	}
 }

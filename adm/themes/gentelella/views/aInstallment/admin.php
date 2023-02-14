@@ -205,7 +205,7 @@ $this->beginWidget(
 ); ?>
 <div class="modal-header">
 	<a class="close" data-dismiss="modal">&times;</a>
-	<h3 class="text-center">Tạo hợp đồng vay họ</h3>
+	<h3 class="text-center">Hợp đồng vay họ</h3>
 </div>
 <div class="modal-body">
 	<div id="body-content">
@@ -215,19 +215,19 @@ $this->beginWidget(
 		?>
 	</div>
 	<div class="space_30"></div>
-	<div class="pull-right">
-		<?= CHtml::link(Yii::t('web/portal', 'close'), '#', array('class' => 'btn btn_green', 'data-dismiss' => 'modal')) ?>
-	</div>
-	<div class="space_1"></div>
 </div>
 <?php $this->endWidget(); ?>
+
 <!-- // end modal create new -->
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/form-function.js"></script>
 <script>
 	$(document).ready(function() {
-		// nếu sử dụng qua modal cần phải gọi lại hàm này. 
-		// để daterangepicker(0) được gọi lên 
-		$("#modal-id").on('shown.bs.modal', function() {
-			$('.datepicker').daterangepicker({
+		$("#modal-id").on('shown.bs.modal', function() { // Xử lý dựa theo sự kiện khởi tạo form
+
+			$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
+			$('#error_summary').html(''); // xóa thông báo lỗi nếu có
+
+			$('.datepicker').daterangepicker({ // nếu sử dụng qua modal cần phải gọi lại hàm này.để daterangepicker(0) được gọi lên 
 				singleDatePicker: true, // Nếu sử dụng from - to date thì set: false
 				showDropdowns: false,
 				// timePicker: true,
@@ -245,8 +245,31 @@ $this->beginWidget(
 				}
 			}, function() {});
 		});
-
 	});
+	// xử lý submit form
+	function submitForm(formId) {
+		// Get the form data
+		var formData = $(formId).serialize();
+
+		// Submit the form via Ajax
+		$.ajax({
+			url: '<?= $this->createUrl('aInstallment/create') ?>',
+			type: 'POST',
+			data: formData,
+			dataType: 'json',
+			success: function(response) {
+				if (response.error != null) {
+					$('#error_summary').html(response.error);
+				} else {
+					$('#error_summary').html('');
+				}
+				// Handle the successful response
+			},
+			error: function(xhr) {
+				// Handle the error
+			}
+		});
+	}
 </script>
 <style>
 	.daterangepicker {

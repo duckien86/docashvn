@@ -7,11 +7,15 @@
 <?php $form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 	'id' => 'ainstallment-form',
 	'action' => $this->createUrl('aInstallment/create'),
-	'enableAjaxValidation' => true,
-	'htmlOptions' => ['class' => 'form-horizontal form-label-left row-border'],
+	'enableAjaxValidation' => false,
+	'htmlOptions' => ['class' => 'form-horizontal form-label-left'],
 )); ?>
 
-<?php echo $form->errorSummary($model); ?>
+<?php //echo $form->errorSummary($model);
+?>
+<div id="error_summary">
+	<!-- Hiển thị lỗi tổng hợp ở đây -->
+</div>
 <div class="form-group">
 	<?php echo $form->labelEx($model, 'customer_name', array(
 		'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
@@ -31,7 +35,6 @@
 		)); ?>
 		<?php echo $form->error($model, 'id'); ?>
 	</div>
-
 </div>
 
 <div class="form-group">
@@ -75,6 +78,7 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<?php echo $form->textField($model, 'total_money', array(
 			'class' => 'form-control',
+			'onchange' => "formatNumberModalInput('#modal-id','#AInstallment_total_money')",
 		)); ?>
 		<?php echo $form->error($model, 'total_money'); ?>
 	</div>
@@ -87,6 +91,7 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<?php echo $form->textField($model, 'receive_money', array(
 			'class' => 'form-control',
+			'onchange' => "formatNumberModalInput('#modal-id','#AInstallment_receive_money')",
 		)); ?>
 		<?php echo $form->error($model, 'receive_money'); ?>
 	</div>
@@ -171,10 +176,14 @@
 	<div class="col-md-5">(Người đi thu tiền họ cho HĐ)</div>
 </div>
 
-<div class="form-groupbuttons">
-	<?php echo CHtml::submitButton($model->isNewRecord ? 'Tạo mới' : 'Lưu lại', ['class' => 'btn btn-primary']); ?>
+<div class="form-groupbuttons pull-right">
+	<?php echo CHtml::button('Lưu lại', ['class' => 'btn btn-primary', 'onclick' => "submitForm('#ainstallment-form')"]); ?>
+	<?php echo CHtml::button('Thoát', ['class' => 'btn btn-danger', 'data-dismiss' => "modal"]); ?>
 </div>
-
+<div class="clearfix"></div>
+<div class="form-group">
+	*Chú ý : Khách hàng phải đảm bảo lãi suất và chi phí khi cho vay (gọi chung là "chi phí vay") tuân thủ quy định pháp luật tại từng thời điểm.
+</div>
 <?php $this->endWidget(); ?>
 
 <script>

@@ -40,6 +40,21 @@
                         ),
                         'items'              => array(
                             [
+                                'label'   => '<i class="fa fa-tags"></i> CẦM ĐỒ ',
+                                'url'     => array('/aPawn'),
+                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                            ],
+                            [
+                                'label'   => '<i class="fa fa-tags"></i> TÍN CHẤP ',
+                                'url'     => array('/aNewsCategory'),
+                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                            ],
+                            [
+                                'label'   => '<i class="fa fa-tags"></i> TRẢ GÓP ',
+                                'url'     => array('/aInstallment'),
+                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                            ],
+                            [
                                 'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ CỬA HÀNG ',
                                 'url'     => array('/aNewsCategory'),
                                 // 'visible' => Yii::app()->user->checkAccess('aNews.*'),

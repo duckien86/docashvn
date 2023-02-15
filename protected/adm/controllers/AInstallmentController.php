@@ -15,38 +15,7 @@ class AInstallmentController extends Controller
     public function filters()
     {
         return array(
-            'accessControl', // perform access control for CRUD operations
-            'postOnly + delete', // we only allow deletion via POST request
-        );
-    }
-
-    /**
-     * Specifies the access control rules.
-     * This method is used by the 'accessControl' filter.
-     * @return array access control rules
-     */
-    public function accessRules()
-    {
-        return array(
-            array(
-                'allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view'),
-                'users' => array('*'),
-            ),
-            array(
-                'allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions' => array('create', 'update'),
-                'users' => array('@'),
-            ),
-            array(
-                'allow', // allow admin user to perform 'admin' and 'delete' actions
-                'actions' => array('admin', 'delete'),
-                'users' => array('admin'),
-            ),
-            array(
-                'deny', // deny all users
-                'users' => array('*'),
-            ),
+            'rights',
         );
     }
 
@@ -73,7 +42,7 @@ class AInstallmentController extends Controller
      */
     public function actionCreate()
     {
-        $response = ['data' => null, 'error' => null];
+        $response = ['ok' => true, 'data' => null, 'error' => null];
         $installment = new AInstallment;
 
         // Uncomment the following line if AJAX validation is needed
@@ -84,13 +53,21 @@ class AInstallmentController extends Controller
             $installment->total_money = str_replace('.', '', $installment->total_money);
             $installment->receive_money = str_replace('.', '', $installment->receive_money);
             $installment->start_date =  Utils::converstDate('d/m/Y', 'Y-m-d', $installment->start_date);
-            $installment->shop_id = '12';
+            if (!Yii::app()->user->super_admin) { // set mã cửa hàng theo user đăng nhập
+                $installment->shop_id = Yii::app()->user->shop_id;
+            }
             $installment->create_date = date('Y-m-d H:i:s');
             $installment->create_by = Yii::app()->user->id;
 
             if ($installment->save()) {
-                $installment->generateItems();
+                if (!$installment->generateItems()) { // Có lỗi trong quá trình 
+                    $response['ok'] = false;
+                    $response['error'] = 'Xảy ra lỗi trong quá trình tạo hợp đồng';
+                    $installment->delete();
+                }
+                $response['data'] = $installment->attributes;
             } else {
+                $response['ok'] = false;
                 $response['error'] = CHtml::errorSummary($installment);
             }
         }

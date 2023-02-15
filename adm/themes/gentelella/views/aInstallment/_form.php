@@ -168,7 +168,7 @@
 		'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
 	)); ?>
 	<div class="col-md-4 col-sm-4 col-xs-12">
-		<?php echo $form->textField($model, 'manage_by', array(
+		<?php echo $form->dropDownList($model, 'manage_by', AUsers::list2Arr(), array(
 			'class' => 'form-control',
 		)); ?>
 		<?php echo $form->error($model, 'manage_by'); ?>
@@ -178,7 +178,7 @@
 
 <div class="form-groupbuttons pull-right">
 	<?php echo CHtml::button('Lưu lại', ['class' => 'btn btn-primary', 'onclick' => "submitForm('#ainstallment-form')"]); ?>
-	<?php echo CHtml::button('Thoát', ['class' => 'btn btn-danger', 'data-dismiss' => "modal"]); ?>
+	<?php echo CHtml::button('Thoát', ['id' => 'btn-close-modal', 'class' => 'btn btn-danger', 'data-dismiss' => "modal"]); ?>
 </div>
 <div class="clearfix"></div>
 <div class="form-group">

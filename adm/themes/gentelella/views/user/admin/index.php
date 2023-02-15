@@ -11,7 +11,7 @@ $this->breadcrumbs = array(
             <div class="x_title">
                 <h2><?php echo UserModule::t("Manage Users"); ?></h2>
                 <div class="clearfix"></div>
-            </div>                
+            </div>
 
             <div class="x_content">
                 <?php
@@ -23,24 +23,27 @@ $this->breadcrumbs = array(
                 ?>
 
                 <?php
-                $this->widget('zii.widgets.grid.CGridView', array(
+                $this->widget('booster.widgets.TbGridView', array(
                     'dataProvider' => $dataProvider,
                     'itemsCssClass' => 'table table-bordered table-striped table-hover jambo_table responsive-utilities',
                     'columns' => array(
-                        array(
-                            'name' => 'id',
-                            'type' => 'raw',
-                            'value' => 'CHtml::link(CHtml::encode($data->id),array("admin/update","id"=>$data->id))',
-                        ),
+                        // array(
+                        //     'name' => 'id',
+                        //     'type' => 'raw',
+                        //     'value' => 'CHtml::link(CHtml::encode($data->id),array("admin/update","id"=>$data->id))',
+                        // ),
                         array(
                             'name' => 'username',
                             'type' => 'raw',
                             'value' => 'CHtml::link(CHtml::encode($data->username),array("admin/view","id"=>$data->id))',
                         ),
                         array(
-                            'name' => 'email',
+                            'name' => 'shop_id',
                             'type' => 'raw',
-                            'value' => 'CHtml::link(CHtml::encode($data->email), "mailto:".$data->email)',
+                            'value' => function ($data) {
+                                $listShop = AShops::list2Arr();
+                                return isset($listShop[$data->shop_id]) ? $listShop[$data->shop_id] : '';
+                            },
                         ),
                         array(
                             'name' => 'createtime',
@@ -59,7 +62,9 @@ $this->breadcrumbs = array(
                             'value' => 'User::itemAlias("AdminStatus",$data->superuser)',
                         ),
                         array(
-                            'class' => 'CButtonColumn',
+                            'class' => 'booster.widgets.TbButtonColumn',
+                            'template' => '{update}{delete}',
+                            'htmlOptions' => array('nowrap' => 'nowrap', 'style' => 'width:100px;text-align:center;vertical-align:middle;padding:10px'),
                         ),
                     ),
                 ));

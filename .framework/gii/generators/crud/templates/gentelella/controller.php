@@ -23,8 +23,7 @@ public $defaultAction='admin';
 public function filters()
 {
 return array(
-'accessControl', // perform access control for CRUD operations
-'postOnly + delete', // we only allow deletion via POST request
+'rights',
 );
 }
 
@@ -74,7 +73,7 @@ public function actionCreate()
 $model=new <?php echo $this->modelClass; ?>;
 
 // Uncomment the following line if AJAX validation is needed
-// $this->performAjaxValidation($model);
+$this->performAjaxValidation($model);
 
 if(isset($_POST['<?php echo $this->modelClass; ?>']))
 {
@@ -98,7 +97,7 @@ public function actionUpdate($id)
 $model=$this->loadModel($id);
 
 // Uncomment the following line if AJAX validation is needed
-// $this->performAjaxValidation($model);
+$this->performAjaxValidation($model);
 
 if(isset($_POST['<?php echo $this->modelClass; ?>']))
 {

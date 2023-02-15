@@ -100,26 +100,18 @@ class AInstallment extends Installment
 		$criteria = new CDbCriteria;
 
 		$criteria->compare('id', $this->id);
-		$criteria->compare('shop_id', $this->shop_id, true);
-		$criteria->compare('create_by', $this->create_by, true);
-		$criteria->compare('customer_name', $this->customer_name, true);
-		$criteria->compare('phone_number', $this->phone_number, true);
-		$criteria->compare('address', $this->address, true);
-		$criteria->compare('personal_id', $this->personal_id, true);
-		$criteria->compare('total_money', $this->total_money);
-		$criteria->compare('receive_money', $this->receive_money);
-		$criteria->compare('loan_date', $this->loan_date, true);
-		$criteria->compare('frequency', $this->frequency);
-		$criteria->compare('is_before', $this->is_before);
-		$criteria->compare('start_date', $this->create_date, true);
-		$criteria->compare('create_date', $this->create_date, true);
-		$criteria->compare('note', $this->note, true);
-		$criteria->compare('manage_by', $this->manage_by, true);
-		$criteria->compare('status', $this->status);
+		if (!Yii::app()->user->super_admin) { // nếu không phải super_admin lấy nhân viên theo shop
+			$criteria->compare('shop_id', Yii::app()->user->shop_id);
+		} else {
+			$criteria->compare('shop_id', $this->shop_id, true);
+		}
 		$criteria->order = 'create_date desc';
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
+			'pagination' => array(
+				'pageSize' => 20,
+			),
 		));
 	}
 
@@ -140,8 +132,7 @@ class AInstallment extends Installment
 	}
 
 	/**
-	 * Tính chi tiết số tiền và ngày phải đóng
-	 * 
+	 * Tính chi tiết số tiền và ngày phải đóng tiền
 	 */
 	public function generateItems()
 	{

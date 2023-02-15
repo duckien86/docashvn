@@ -49,27 +49,14 @@ $this->widget('booster.widgets.TbGridView', array(
 		array(
 			'name' => 'id',
 			'type' => 'raw',
+			'value' => function ($data) {
+				return 'BH-' . $data->id;
+			},
 			'htmlOptions' =>
 			array(
-				'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+				'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
 			),
 		),
-		// array(
-		// 	'name' => 'shop_id',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'create_by',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
 		array(
 			'name' => 'customer_name',
 			'type' => 'raw',
@@ -78,70 +65,18 @@ $this->widget('booster.widgets.TbGridView', array(
 				'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
 			),
 		),
-		// array(
-		// 	'name' => 'phone_number',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'address',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'personal_id',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'total_money',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'receive_money',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'loan_date',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'frequency',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
-		// array(
-		// 	'name' => 'is_before',
-		// 	'type' => 'raw',
-		// 	'htmlOptions' =>
-		// 	array(
-		// 		'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-		// 	),
-		// ),
+		array(
+			'name' => 'receive_money',
+			'type' => 'raw',
+			'value' => function ($data) {
+				return Utils::numberFormat($data->receive_money);
+			},
+			'htmlOptions' =>
+			array(
+				'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+			),
+		),
+
 		array(
 			'name' => 'start_date',
 			'type' => 'raw',
@@ -159,22 +94,6 @@ $this->widget('booster.widgets.TbGridView', array(
 			),
 		),
 		array(
-			'name' => 'note',
-			'type' => 'raw',
-			'htmlOptions' =>
-			array(
-				'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-			),
-		),
-		array(
-			'name' => 'manage_by',
-			'type' => 'raw',
-			'htmlOptions' =>
-			array(
-				'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-			),
-		),
-		array(
 			'name' => 'status',
 			'type' => 'raw',
 			'htmlOptions' =>
@@ -184,7 +103,20 @@ $this->widget('booster.widgets.TbGridView', array(
 		),
 		array(
 			'class' => 'booster.widgets.TbButtonColumn',
-			'template' => '{update}{delete}',
+			'template' => '{payment}',
+			'buttons'      => array(
+				'payment'  => array(
+					'icon' => 'glyphicon glyphicon-usd',
+					'label' => 'Trả tiền',
+					'options' => array(
+						'onclick' => 'alert();',
+					),
+					// 'url' => function ($data) {
+					// 	return Yii::app()->createUrl('aCardStoreBusiness/viewExport', array('id' => $data->id));
+					// }
+				),
+			),
+
 			'htmlOptions' => array('nowrap' => 'nowrap', 'style' => 'width:100px;text-align:center;vertical-align:middle;padding:10px'),
 		),
 	),
@@ -220,6 +152,11 @@ $this->beginWidget(
 
 <!-- // end modal create new -->
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/form-function.js"></script>
+<!-- PNotify -->
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.core.js"></script>
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.buttons.js"></script>
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.nonblock.js"></script>
+
 <script>
 	$(document).ready(function() {
 		$("#modal-id").on('shown.bs.modal', function() { // Xử lý dựa theo sự kiện khởi tạo form
@@ -248,9 +185,11 @@ $this->beginWidget(
 	});
 	// xử lý submit form
 	function submitForm(formId) {
+
 		// Get the form data
 		var formData = $(formId).serialize();
-
+		// disable form
+		$('form *').prop('disabled', true);
 		// Submit the form via Ajax
 		$.ajax({
 			url: '<?= $this->createUrl('aInstallment/create') ?>',
@@ -258,19 +197,40 @@ $this->beginWidget(
 			data: formData,
 			dataType: 'json',
 			success: function(response) {
-				if (response.error != null) {
-					$('#error_summary').html(response.error);
+
+				$('form *').prop('disabled', false); // Mở lại form cho phép chỉnh sửa
+
+				if (response.ok == false && response.error != null) { // Không tạo đơn thành công
+					$('#error_summary').html(response.error); // hiển thị lỗi
 				} else {
-					$('#error_summary').html('');
+					$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
+					$('#error_summary').html(''); // xóa lỗi trước đó
+					new PNotify({
+						title: 'Tạo hợp đồng thành công!',
+						// text: 'Khách hàng +' + data.customer_name,
+						type: 'info'
+					});
+
+					$('#ainstallment-grid').yiiGridView('update', {
+						data: $(this).serialize()
+					});
 				}
 				// Handle the successful response
 			},
 			error: function(xhr) {
 				// Handle the error
+				$('form *').prop('disabled', false);
 			}
 		});
 	}
+	// load lại bảng dữ liệu khi đóng form tạo mới
+	$('#btn-close-modal').on('click', function() {
+		$('#ainstallment-grid').yiiGridView('update', {
+			data: $(this).serialize()
+		});
+	})
 </script>
+
 <style>
 	.daterangepicker {
 		/* set lại index để datepicker ko bị ẩn sau modal */
@@ -280,6 +240,6 @@ $this->beginWidget(
 
 <style>
 	.modal-dialog {
-		width: 700px;
+		width: 800px;
 	}
 </style>

@@ -1,27 +1,32 @@
 <?php
 
 /**
- * This is the model class for table "{{shops}}".
+ * This is the model class for table "{{users}}".
  *
- * The followings are the available columns in table '{{shops}}':
- * @property string $id
- * @property string $name
- * @property string $note
- * @property string $create_date
- * @property string $create_by
- * @property string $owner
+ * The followings are the available columns in table '{{users}}':
+ * @property integer $id
+ * @property string $username
+ * @property string $password
+ * @property string $email
+ * @property string $activkey
+ * @property integer $createtime
+ * @property integer $lastvisit
+ * @property integer $superuser
  * @property integer $status
+ * @property integer $parent_id
+ * @property string $shop_id
  */
-class AShops extends Shops
+class AUsers extends Users
 {
 	const  ACTIVE = 1;
 	const  NOT_ACTIVE = 0;
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{shops}}';
+		return '{{users}}';
 	}
 
 	/**
@@ -32,14 +37,14 @@ class AShops extends Shops
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id', 'required'),
-			array('status', 'numerical', 'integerOnly' => true),
-			array('id, name, note', 'length', 'max' => 50),
-			array('create_by, owner', 'length', 'max' => 255),
-			array('create_date', 'safe'),
+			array('username, password, email', 'required'),
+			array('createtime, lastvisit, superuser, status, parent_id', 'numerical', 'integerOnly' => true),
+			array('username', 'length', 'max' => 20),
+			array('password, email, activkey', 'length', 'max' => 128),
+			array('shop_id', 'length', 'max' => 50),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, note, create_date, create_by, owner, status', 'safe', 'on' => 'search'),
+			array('id, username, password, email, activkey, createtime, lastvisit, superuser, status, parent_id, shop_id', 'safe', 'on' => 'search'),
 		);
 	}
 
@@ -60,12 +65,16 @@ class AShops extends Shops
 	{
 		return array(
 			'id' => 'ID',
-			'name' => 'Tên',
-			'note' => 'Ghi chú',
-			'create_date' => 'Ngày tạo',
-			'create_by' => 'Người tạo',
-			'owner' => 'Người sở hữu',
-			'status' => 'Trạng thái',
+			'username' => 'Username',
+			'password' => 'Password',
+			'email' => 'Email',
+			'activkey' => 'Activkey',
+			'createtime' => 'Createtime',
+			'lastvisit' => 'Lastvisit',
+			'superuser' => 'Superuser',
+			'status' => 'Status',
+			'parent_id' => 'Parent',
+			'shop_id' => 'Shop',
 		);
 	}
 
@@ -87,13 +96,17 @@ class AShops extends Shops
 
 		$criteria = new CDbCriteria;
 
-		$criteria->compare('id', $this->id, true);
-		$criteria->compare('name', $this->name, true);
-		$criteria->compare('note', $this->note, true);
-		$criteria->compare('create_date', $this->create_date, true);
-		$criteria->compare('create_by', $this->create_by, true);
-		$criteria->compare('owner', $this->owner, true);
+		$criteria->compare('id', $this->id);
+		$criteria->compare('username', $this->username, true);
+		$criteria->compare('password', $this->password, true);
+		$criteria->compare('email', $this->email, true);
+		$criteria->compare('activkey', $this->activkey, true);
+		$criteria->compare('createtime', $this->createtime);
+		$criteria->compare('lastvisit', $this->lastvisit);
+		$criteria->compare('superuser', $this->superuser);
 		$criteria->compare('status', $this->status);
+		$criteria->compare('parent_id', $this->parent_id);
+		$criteria->compare('shop_id', $this->shop_id, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
@@ -104,7 +117,7 @@ class AShops extends Shops
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return AShops the static model class
+	 * @return AUsers the static model class
 	 */
 	public static function model($className = __CLASS__)
 	{
@@ -116,11 +129,16 @@ class AShops extends Shops
 	 */
 	public static function list2Arr()
 	{
+		$criteria = new CDbCriteria();
+		if (!Yii::app()->user->super_admin) { // nếu không phải super_admin lấy nhân viên theo shop
+			$criteria->compare('shop_id', Yii::app()->user->shop_id);
+		}
+		$criteria->compare('status', self::ACTIVE);
 
-		$models = self::model()->findAllByAttributes(['status' => self::ACTIVE]);
+		$models = self::model()->findAll($criteria);
 
 		if (empty($models)) return [];
 
-		return CHtml::listData($models, 'id', 'name');
+		return CHtml::listData($models, 'id', 'username');
 	}
 }

@@ -56,7 +56,7 @@
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ CỬA HÀNG ',
-                                'url'     => array('/aNewsCategory'),
+                                'url'     => array('/aShops'),
                                 // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
                             ],
                             [
@@ -133,7 +133,7 @@
                         ),
                         array(
                             'url'     => array('/user/admin'),
-                            'label'   => '<i class="fa fa-cogs"></i> ' . Yii::app()->getModule('user')->t("Manage User"),
+                            'label'   => '<i class="fa fa-cogs"></i> Quản lý tài khoản',
                             'visible' => (Yii::app()->user->checkAccess('User.Admin.Admin') || Yii::app()->user->checkAccess('User.Admin.*')),
                         ),
                         array(

@@ -7,6 +7,15 @@
     <?php echo CHtml::errorSummary(array($model, $profile)); ?>
 
     <div class="form-group">
+        <?php echo CHtml::activeLabelEx($model, 'shop_id', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <?php echo CHtml::activeDropDownList($model, 'shop_id', AShops::list2Arr(), array('class' => 'form-control col-md-7 col-xs-12')); ?>
+            <ul class="parsley-errors-list">
+                <li><?php echo CHtml::error($model, 'shop_id', array('class' => 'parsley-required')); ?></li>
+            </ul>
+        </div>
+    </div>
+    <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'username', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
         <div class="col-md-6 col-sm-6 col-xs-12">
             <?php echo CHtml::activeTextField($model, 'username', array('class' => 'form-control col-md-7 col-xs-12', 'size' => 20, 'maxlength' => 20)); ?>
@@ -19,14 +28,14 @@
     <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'password', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <?php echo CHtml::activePasswordField($model, 'password', array('class' => 'form-control col-md-7 col-xs-12', 'size' => 60, 'maxlength' => 128)); ?>
+            <?php echo CHtml::activePasswordField($model, 'password', array('placeHolder' => 'Để trống nếu không muốn đổi mật khẩu', 'class' => 'form-control col-md-7 col-xs-12', 'size' => 60, 'maxlength' => 128)); ?>
             <ul class="parsley-errors-list">
                 <li><?php echo CHtml::error($model, 'password', array('class' => 'parsley-required')); ?></li>
             </ul>
         </div>
     </div>
 
-    <div class="form-group">
+    <!-- <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'email', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
         <div class="col-md-6 col-sm-6 col-xs-12">
             <?php echo CHtml::activeTextField($model, 'email', array('class' => 'form-control col-md-7 col-xs-12', 'size' => 60, 'maxlength' => 128)); ?>
@@ -34,7 +43,7 @@
                 <li><?php echo CHtml::error($model, 'email', array('class' => 'parsley-required')); ?></li>
             </ul>
         </div>
-    </div>
+    </div> -->
 
     <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'superuser', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
@@ -59,7 +68,7 @@
     $profileFields = $profile->getFields();
     if ($profileFields) {
         foreach ($profileFields as $field) {
-            ?>
+    ?>
             <div class="form-group">
                 <?php
                 echo CHtml::activeLabelEx($profile, $field->varname, array('class' => 'control-label col-md-3 col-sm-3 col-xs-12'));
@@ -77,8 +86,8 @@
                 echo '<ul class="parsley-errors-list"><li>' . CHtml::error($profile, $field->varname, array('class' => 'parsley-required')) . '</li></ul>';
                 echo '</div>';
                 ?>
-            </div>	
-            <?php
+            </div>
+    <?php
         }
     }
     ?>
@@ -92,3 +101,8 @@
     <?php echo CHtml::endForm(); ?>
 
 </div><!-- form -->
+
+<script>
+    $('#User_username').val('');
+    $('#User_password').val('');
+</script>

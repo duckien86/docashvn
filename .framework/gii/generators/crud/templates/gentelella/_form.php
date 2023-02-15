@@ -27,14 +27,15 @@ foreach ($this->tableSchema->columns as $column) {
 	if ($column->autoIncrement)
 		continue;
 ?>
+
+	<?php echo "<!-- {$column->name} --> \n" ?>
 	<div class="form-group">
 		<?php echo "<?php echo " . $this->generateActiveLabel($this->modelClass, $column, ['class' => 'control-label col-md-3 col-sm-3 col-xs-12']) . "; ?>\n"; ?>
-		<div class="col-md-6 col-sm-6 col-xs-12">
-			<?php echo "<?php echo " . $this->generateActiveField($this->modelClass, $column, ['class' => 'form-control col-md-7 col-xs-12']) . "; ?>\n"; ?>
+		<div class="col-md-4 col-sm-4 col-xs-12">
+			<?php echo "<?php echo " . $this->generateActiveField($this->modelClass, $column, ['class' => 'form-control']) . "; ?>\n"; ?>
 		</div>
 		<?php echo "<?php echo \$form->error(\$model,'{$column->name}'); ?>\n"; ?>
 	</div>
-
 <?php
 }
 ?>

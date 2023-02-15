@@ -462,4 +462,13 @@ class Utils
         return  $new_date_str; // outputs "2023-02-14"
 
     }
+
+    public static function numberFormat($string, $decimals = 0, $dec_sep = ",", $thous_sep = ".")
+    {
+        $ret = '0';
+        if ($string != '')
+            $ret = number_format($string, $decimals, $dec_sep, $thous_sep);
+
+        return $ret;
+    }
 }

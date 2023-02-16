@@ -113,6 +113,6 @@ $this->beginWidget(
 
 <style>
 	.modal-dialog {
-		width: 800px;
+		width: 700px;
 	}
 </style>

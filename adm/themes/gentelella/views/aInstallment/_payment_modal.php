@@ -13,16 +13,26 @@ $this->beginWidget(
 ); ?>
 <div class="modal-header">
 	<a class="close" data-dismiss="modal">&times;</a>
-	<h3 class="text-center">Nộp tiền </h3>
+	<h3 class="text-center">Hợp đồng vay họ</h3>
 </div>
 <div class="modal-body">
 	<div id="body-content">
-		<?php
-		echo $this->renderPartial('_form', array(
-			'model' => $model,
-			'modalID' => $modalID,
-		));
-		?>
+		<div class="row">
+			<?php
+			echo $this->renderPartial('_payment_modal_top', array(
+				'model' => $model,
+				'modalID' => $modalID,
+			));
+			?>
+		</div>
+		<div class="row" style="margin-top:10px">
+			<?php
+			echo $this->renderPartial('_payment_modal_body', array(
+				'model' => $model,
+				'modalID' => $modalID,
+			));
+			?>
+		</div>
 	</div>
 	<div class="space_30"></div>
 </div>
@@ -113,6 +123,6 @@ $this->beginWidget(
 
 <style>
 	.modal-dialog {
-		width: 800px;
+		width: 700px;
 	}
 </style>

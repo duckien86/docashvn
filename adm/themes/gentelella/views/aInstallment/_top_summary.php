@@ -1,4 +1,4 @@
-<div class="row tile_count">
+<div class="row row-top">
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Quỹ tiền mặt</span>
@@ -40,6 +40,11 @@
 </div>
 
 <style>
+	.row-top {
+		background: #eae7e7;
+		padding: 10px;
+	}
+
 	.count_top {
 		font-size: 18px;
 	}

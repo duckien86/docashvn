@@ -35,7 +35,7 @@ return false;
 	// modal form tạo mới hợp đồng
 	$this->renderPartial('_create_new_modal', ['model' => $model, 'modalID' => $modalCreateNewID,]);
 	// modal form thanh toán tiền 
-	$this->renderPartial('_installment_payment', ['model' => $model, 'modalID' => $modalInstallmentPayment,]);
+	$this->renderPartial('_payment_modal', ['model' => $model, 'modalID' => $modalInstallmentPayment,]);
 
 	// bảng danh sách
 	$this->widget('booster.widgets.TbGridView', array(

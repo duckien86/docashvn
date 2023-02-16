@@ -160,4 +160,25 @@ class AInstallment extends Installment
 		}
 		return false;
 	}
+
+	/**
+	 * Tạo nút thao tác trên bảng admin
+	 */
+	public function generateColumnButton()
+	{
+		$installmentPayment = CHtml::link('<i class="glyphicon glyphicon-usd"></i>', '#', [
+			'data-original-title' => "Nộp tiền",
+			'data-toggle' => "modal",
+			'data-target' => "#modal-installment-payment",
+			'class' => 'btn btn-warning btn-xs',
+			'onclick' => "installmentPayment($this->id);"
+		]);
+		$closeContract = CHtml::link('<i class="glyphicon glyphicon-arrow-down"></i>', '#', [
+			'data-original-title' => "Đóng hợp đồng",
+			'data-toggle' => "tooltip",
+			'class' => 'btn btn-danger btn-xs',
+			'onclick' => "closeContract($this->id);"
+		]);
+		return $installmentPayment . $closeContract;
+	}
 }

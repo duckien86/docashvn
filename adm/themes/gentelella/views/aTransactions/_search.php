@@ -17,8 +17,13 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'user_id'); ?>
-		<?php echo $form->textField($model,'user_id',''); ?>
+		<?php echo $form->label($model,'create_by'); ?>
+		<?php echo $form->textField($model,'create_by',''); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'shop_id'); ?>
+		<?php echo $form->textField($model,'shop_id',''); ?>
 	</div>
 
 	<div class="row">
@@ -59,6 +64,21 @@
 	<div class="row">
 		<?php echo $form->label($model,'status'); ?>
 		<?php echo $form->textField($model,'status',''); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'extra_param_1'); ?>
+		<?php echo $form->textField($model,'extra_param_1',''); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'extra_param_2'); ?>
+		<?php echo $form->textField($model,'extra_param_2',''); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->label($model,'extra_param_3'); ?>
+		<?php echo $form->textField($model,'extra_param_3',''); ?>
 	</div>
 
 	<div class="row buttons">

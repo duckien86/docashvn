@@ -1,4 +1,5 @@
-<!-- modal create new -->
+<!-- Quản lý thông tin và các nghiệp vụ Vay Họ -->
+<!-- // begin modal  -->
 <?php
 $this->beginWidget(
 	'booster.widgets.TbModal',
@@ -18,27 +19,25 @@ $this->beginWidget(
 <div class="modal-body">
 	<div id="body-content">
 		<div class="row">
-			<?php
-			echo $this->renderPartial('_payment_modal_top', array(
+			<?php echo $this->renderPartial('_payment_modal_top', array(
 				'model' => $model,
 				'modalID' => $modalID,
 			));
 			?>
 		</div>
-		<div class="row" style="margin-top:10px">
-			<?php
-			echo $this->renderPartial('_payment_modal_body', array(
+		<div class="clearfix"></div>
+		<div class="row">
+			<?php echo $this->renderPartial('_payment_modal_body', array(
 				'model' => $model,
 				'modalID' => $modalID,
 			));
 			?>
 		</div>
 	</div>
-	<div class="space_30"></div>
 </div>
 <?php $this->endWidget(); ?>
 
-<!-- // end modal create new -->
+<!-- // end modal -->
 
 <script>
 	$(document).ready(function() {

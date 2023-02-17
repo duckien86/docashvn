@@ -22,7 +22,8 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
-		'user_id',
+		'create_by',
+		'shop_id',
 		'customer',
 		'amount',
 		'note',
@@ -31,5 +32,8 @@ $this->menu=array(
 		'create_date',
 		'ref_id',
 		'status',
+		'extra_param_1',
+		'extra_param_2',
+		'extra_param_3',
 	),
 )); ?>

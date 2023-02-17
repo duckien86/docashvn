@@ -2,7 +2,7 @@
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Quỹ tiền mặt</span>
-			<div class="count-customize">2.500.000.000</div>
+			<div class="count-customize"><?= ATransactions::getCurrentBalance(Yii::app()->user->shop_id, true); ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">

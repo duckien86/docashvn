@@ -38,21 +38,20 @@ class AInstallmentController extends Controller
      * 2. Lấy dữ liệu người xử lý bát họ
      * 3. Thêm chức năng thu tiền
      * 4. Khi tạo mới 1 hợp đồng cần kiểm tra có đủ tiền hay không?
+     * 5. Trừ tiền quỹ khi tạo thành công hợp đồng.
      * 
      */
     public function actionCreate()
     {
         $response = ['ok' => true, 'data' => null, 'error' => null];
         $installment = new AInstallment;
+        $installment->scenario = 'createNew';
 
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($installment);
 
         if (isset($_POST['AInstallment'])) {
             $installment->attributes = $_POST['AInstallment'];
-            $installment->total_money = str_replace('.', '', $installment->total_money);
-            $installment->receive_money = str_replace('.', '', $installment->receive_money);
-            $installment->start_date =  Utils::converstDate('d/m/Y', 'Y-m-d', $installment->start_date);
             if (!Yii::app()->user->super_admin) { // set mã cửa hàng theo user đăng nhập
                 $installment->shop_id = Yii::app()->user->shop_id;
             }
@@ -60,10 +59,17 @@ class AInstallmentController extends Controller
             $installment->create_by = Yii::app()->user->id;
 
             if ($installment->save()) {
-                if (!$installment->generateItems()) { // Có lỗi trong quá trình 
+                if ($installment->generateItems()) {
+                    // thực hiện thêm giao dịch chi tiền
+                    $transaction = new ATransactions;
+                    if (!$transaction->outgoingPayment($installment->create_by, $installment->shop_id, $installment->customer_name, $installment->receive_money, 'Khách vay bát họ', 'installment_create', $installment->id)) {
+                        $response['ok'] = false;
+                        $response['error'] = CHtml::errorSummary($transaction);
+                        $installment->cancel();
+                    }
+                } else { // Có lỗi trong quá trình 
                     $response['ok'] = false;
                     $response['error'] = 'Xảy ra lỗi trong quá trình tạo hợp đồng';
-                    $installment->delete();
                 }
                 $response['data'] = $installment->attributes;
             } else {

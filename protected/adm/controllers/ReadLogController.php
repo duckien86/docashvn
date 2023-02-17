@@ -1,6 +1,6 @@
 <?php
 
-    class ReadLogController extends AController
+    class ReadLogController extends Controller
     {
         private $root_path;
 
@@ -102,5 +102,3 @@
         }
 
     }
-
-?>

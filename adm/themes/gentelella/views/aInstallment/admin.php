@@ -41,7 +41,7 @@ return false;
 	$this->widget('booster.widgets.TbGridView', array(
 		'id' => 'ainstallment-grid',
 		'dataProvider' => $model->search(),
-		'template' => '{items}\n{pager}', // Disable the summary row
+		'template' => '{items}{pager}', // Disable the summary row
 		// 'filter' => $model,
 		'itemsCssClass' => 'table table-bordered table-striped table-hover jambo_table responsive-utilities',
 		'columns' => array(
@@ -115,10 +115,8 @@ return false;
 
 	?>
 </div>
-<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/form-function.js">
-	< /scrip> <!--PNotify-- > <
-	script type = "text/javascript"
-	src = "/docashvn/adm/themes/gentelella/js/notify/pnotify.core.js" >
-</script>
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/form-function.js"></script>
+<!-- PNotify  -->
+<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.core.js"></script>
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.buttons.js"></script>
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.nonblock.js"></script>

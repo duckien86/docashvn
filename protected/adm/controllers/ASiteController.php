@@ -1,6 +1,6 @@
 <?php
 
-class ASiteController extends AController
+class ASiteController extends Controller
 {
     public function init()
     {

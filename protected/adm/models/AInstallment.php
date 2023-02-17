@@ -24,6 +24,7 @@
  */
 class AInstallment extends Installment
 {
+	public $currentBalance;
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -39,10 +40,35 @@ class AInstallment extends Installment
 			array('customer_name', 'length', 'max' => 255),
 			array('phone_number', 'length', 'max' => 20),
 			array('address, note', 'length', 'max' => 500),
+			array('currentBalance', 'checkEnough', 'message' => 'Tiền quỹ hiện tại không đủ.', 'on' => 'createNew'),
+			array('total_money', 'compare', 'compareAttribute' => 'receive_money', 'operator' => '>='),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, shop_id, create_by, customer_name, phone_number, address, personal_id, total_money, receive_money, loan_date, frequency, is_before, create_date, note, manage_by, status', 'safe', 'on' => 'search'),
 		);
+	}
+
+	public function beforeValidate()
+	{
+		if (parent::beforeValidate()) {
+			$this->total_money = str_replace('.', '', $this->total_money);
+			$this->receive_money = str_replace('.', '', $this->receive_money);
+			$this->start_date =  Utils::converstDate('d/m/Y', 'Y-m-d', $this->start_date);
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+
+	public function checkEnough($attribute, $params)
+	{
+		$this->currentBalance = ATransactions::getCurrentBalance($this->shop_id);
+
+		if ($this->currentBalance < $this->receive_money) {
+			$this->addError($attribute, $params['message'] . "(" . Utils::numberFormat($this->currentBalance) . " đ)");
+		}
 	}
 
 	/**
@@ -180,5 +206,27 @@ class AInstallment extends Installment
 			'onclick' => "closeContract($this->id);"
 		]);
 		return $installmentPayment . $closeContract;
+	}
+
+	/**
+	 * 
+	 */
+	public function createContract()
+	{
+		if ($this->save()) { // lưu hợp đồng
+			if ($this->generateItems()) { // thêm chi tiết lịch đóng tiền
+				// thực hiện thêm giao dịch chi tiền
+				// ATransactions::outgoingPayment($this->create_by, $this->shop_id, $this->customer_name, $this->receive_money, 'Khách vay bát họ', 'inst_create', $this->id);
+			}
+		}
+		$error = CHtml::errorSummary($this);
+		return false;
+	}
+
+
+	public function cancel()
+	{
+		AInstallmentItems::model()->deleteAllByAttributes(['installment_id' => $this->id]);
+		$this->delete();
 	}
 }

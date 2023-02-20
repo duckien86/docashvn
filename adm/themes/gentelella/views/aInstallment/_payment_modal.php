@@ -18,19 +18,21 @@ $this->beginWidget(
 </div>
 <div class="modal-body">
 	<div id="body-content">
-		<div class="row">
-			<?php echo $this->renderPartial('_payment_modal_top', array(
-				'model' => $model,
-				'modalID' => $modalID,
-			));
+		<div class="row" id="_payment_modal_top_area">
+			<?php
+			// echo $this->renderPartial('_payment_modal_top', array(
+			// 	'model' => $model,
+			// 	'modalID' => $modalID,
+			// ));
 			?>
 		</div>
 		<div class="clearfix"></div>
-		<div class="row">
-			<?php echo $this->renderPartial('_payment_modal_body', array(
-				'model' => $model,
-				'modalID' => $modalID,
-			));
+		<div class="row" id="_payment_modal_body_area">
+			<?php
+			//  echo $this->renderPartial('_payment_modal_body', array(
+			// 	'model' => $model,
+			// 	'modalID' => $modalID,
+			// ));
 			?>
 		</div>
 	</div>
@@ -40,85 +42,52 @@ $this->beginWidget(
 <!-- // end modal -->
 
 <script>
-	$(document).ready(function() {
-		$("#<?= $modalID ?>").on('shown.bs.modal', function() { // Xử lý dựa theo sự kiện khởi tạo form
+	// $(document).ready(function() {
+	// 	/**
+	// 	 * Thực hiện xử lý thanh toán khoản vay
+	// 	 */
+	// 	var modal_id = '#<?= $modalID ?>';
 
-			$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
-			$('#error_summary').html(''); // xóa thông báo lỗi nếu có
+	// 	$(modal_id).on('shown.bs.modal', function() { // Xử lý dựa theo sự kiện khởi tạo form
 
-			$('.datepicker').daterangepicker({ // nếu sử dụng qua modal cần phải gọi lại hàm này.để daterangepicker(0) được gọi lên 
-				singleDatePicker: true, // Nếu sử dụng from - to date thì set: false
-				showDropdowns: false,
-				// timePicker: true,
-				timePickerIncrement: 5,
-				format: 'DD/MM/YYYY',
-				buttonClasses: ['btn btn-default'],
-				applyClass: 'btn-small btn-primary',
-				cancelClass: 'btn-small',
-				locale: {
-					applyLabel: 'Áp dụng',
-					cancelLabel: 'Đóng',
-					daysOfWeek: ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'],
-					monthNames: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'],
-					firstDay: 1
-				}
-			}, function() {});
-		});
-	});
-	// xử lý submit form
-	function submitForm(formId) {
+	// 	});
+	// });
 
-		// Get the form data
-		var formData = $(formId).serialize();
-		// disable form
-		$('form *').prop('disabled', true);
-		// Submit the form via Ajax
+	// Khởi tạo form thanh toán
+	function initPaymentForm(id) {
+
+		var current_modal_id = '#<?= $modalID ?>';
+		const current_modal = $(current_modal_id);
+
 		$.ajax({
-			url: '<?= $this->createUrl('aInstallment/create') ?>',
+			url: '<?= $this->createUrl('aInstallment/initPaymentForm') ?>',
 			type: 'POST',
-			data: formData,
+			data: {
+				id: id,
+				'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken ?>'
+			},
 			dataType: 'json',
 			success: function(response) {
 
-				$('form *').prop('disabled', false); // Mở lại form cho phép chỉnh sửa
-
-				if (response.ok == false && response.error != null) { // Không tạo đơn thành công
-					$('#error_summary').html(response.error); // hiển thị lỗi
+				if (response.payment_modal_top != null) { // Có dữ liệu
+					current_modal.find('#_payment_modal_top_area').html(response.payment_modal_top);
 				} else {
-					$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
-					$('#error_summary').html(''); // xóa lỗi trước đó
-					new PNotify({
-						title: 'Tạo hợp đồng thành công!',
-						// text: 'Khách hàng +' + data.customer_name,
-						type: 'info'
-					});
-
-					$('#ainstallment-grid').yiiGridView('update', {
-						data: $(this).serialize()
-					});
+					current_modal.find('#_payment_modal_top_area').html('Không có dữ liệu');
+				}
+				if (response.payment_modal_body != null) { // Có dữ liệu
+					current_modal.find('#_payment_modal_body_area').html(response.payment_modal_top);
+				} else {
+					current_modal.find('#_payment_modal_body_area').html('Không có dữ liệu');
 				}
 				// Handle the successful response
 			},
 			error: function(xhr) {
-				// Handle the error
-				$('form *').prop('disabled', false);
+				// // Handle the error
+				// $('form *').prop('disabled', false);
 			}
 		});
 	}
-	// load lại bảng dữ liệu khi đóng form tạo mới
-	$('#btn-close-modal').on('click', function() {
-		$('#ainstallment-grid').yiiGridView('update', {
-			data: $(this).serialize()
-		});
-	})
 </script>
-
-<style>
-	.daterangepicker {
-		/* set lại index để datepicker ko bị ẩn sau modal */
-		z-index: 9999 !important;
-	}
-</style>
 
 <style>
 	.modal-dialog {

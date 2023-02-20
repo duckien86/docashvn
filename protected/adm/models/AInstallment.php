@@ -25,6 +25,9 @@
 class AInstallment extends Installment
 {
 	public $currentBalance;
+	// public $endDate;
+
+	public $items;
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -48,6 +51,17 @@ class AInstallment extends Installment
 		);
 	}
 
+	public function getDisplayEndDate()
+	{
+		$endDate = date('Y-m-d', strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
+		return	Utils::converstDate('Y-m-d', 'd/m/Y', $endDate);
+	}
+
+	public function getDisplayStartDate()
+	{
+		return	Utils::converstDate('Y-m-d', 'd/m/Y', $this->start_date);
+	}
+
 	public function beforeValidate()
 	{
 		if (parent::beforeValidate()) {
@@ -61,7 +75,9 @@ class AInstallment extends Installment
 		}
 	}
 
-
+	/**
+	 * Validation có đủ tiền không?
+	 */
 	public function checkEnough($attribute, $params)
 	{
 		$this->currentBalance = ATransactions::getCurrentBalance($this->shop_id);
@@ -197,7 +213,7 @@ class AInstallment extends Installment
 			'data-toggle' => "modal",
 			'data-target' => "#modal-installment-payment",
 			'class' => 'btn btn-warning btn-xs',
-			'onclick' => "installmentPayment($this->id);"
+			'onclick' => "initPaymentForm($this->id);"
 		]);
 		$closeContract = CHtml::link('<i class="glyphicon glyphicon-arrow-down"></i>', '#', [
 			'data-original-title' => "Đóng hợp đồng",
@@ -228,5 +244,25 @@ class AInstallment extends Installment
 	{
 		AInstallmentItems::model()->deleteAllByAttributes(['installment_id' => $this->id]);
 		$this->delete();
+	}
+
+	/**
+	 * Lấy dữ liệu về hợp đồng vay họ
+	 */
+	public function getData($installmentId, $shopId)
+	{
+		if (empty($installmentId) && empty($shopId)) return false;
+
+		// Lấy dữ liệu hợp đồng
+		$criteria = new CDbCriteria();
+		$criteria->compare('id', $installmentId);
+		$criteria->compare('shop_id', $shopId);
+		$installment = AInstallment::model()->find($criteria);
+		if ($installment) {
+			$installmentItems = AInstallmentItems::model()->findAllByAttributes(['installment_id' => $installmentId]);
+			$installment->items = $installmentItems;
+		}
+
+		return $installment;
 	}
 }

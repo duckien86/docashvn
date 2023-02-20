@@ -1,12 +1,18 @@
+<?php
+/* @var $this AInstallmentController */
+/* @var $installment AInstallment */
+/* @var $installmentItems AInstallmentItems */
+?>
 <div class="col-md-6">
 	<table class="table table-hover table-bordered">
 		<tbody>
 			<tr>
-				<td colspan="3" class="header cusName">Minh nguyên cơ thạch</td>
+				<td class="header">Khách hàng</td>
+				<td colspan="2" align="right"><?= $installment->customer_name ?></td>
 			</tr>
 			<tr>
 				<td class="header">Bát họ</td>
-				<td colspan="2" align="right">25,000,000 VNĐ</td>
+				<td colspan="2" align="right"><?= $installment->total_money ?></td>
 			</tr>
 			<tr>
 				<td class="header">Tỷ lệ</td>
@@ -14,8 +20,8 @@
 			</tr>
 			<tr>
 				<td class="header">Họ từ ngày</td>
-				<td align="right">15-02-2023</td>
-				<td align="right" id="tdToDate">05-04-2023</td>
+				<td align="right"><?= $installment->displayStartDate ?></td>
+				<td align="right" id="tdToDate"><?= $installment->displayEndDate ?></td>
 			</tr>
 			<tr>
 				<td class="header highlight">
@@ -31,7 +37,7 @@
 		<tbody>
 			<tr>
 				<td class="header">Số tiền giao khách</td>
-				<td colspan="2" align="right"><span class="bold">20,000,000 </span>VNĐ</td>
+				<td colspan="2" align="right"><span class="bold"><?= $installment->receive_money ?> </span>VNĐ</td>
 			</tr>
 			<tr>
 				<td class="header">Tổng tiền phải đóng</td>

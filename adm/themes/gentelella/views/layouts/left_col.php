@@ -42,50 +42,50 @@
                             [
                                 'label'   => '<i class="fa fa-tags"></i> CẦM ĐỒ ',
                                 'url'     => array('/aPawn'),
-                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                'visible' => Yii::app()->user->checkAccess('aPawn.*'),
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> TÍN CHẤP ',
                                 'url'     => array('/aNewsCategory'),
-                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                'visible' => Yii::app()->user->checkAccess('aPawn.*'),
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> TRẢ GÓP ',
                                 'url'     => array('/aInstallment'),
-                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                'visible' => Yii::app()->user->checkAccess('aInstallment.*'),
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ CỬA HÀNG ',
                                 'url'     => array('/aShops'),
-                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                'visible' => Yii::app()->user->checkAccess('aShop.*'),
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ THU CHI <span class="fa fa-chevron-down"></span>',
                                 'url'     => 'javascript:;',
-                                'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                'visible' => Yii::app()->user->checkAccess('staff'),
                                 'items' => [
                                     [
                                         'label'   => '<i class="fa fa-tags"></i> Chi hoạt động',
                                         'url'     => array('/aShop'),
-                                        'visible' => Yii::app()->user->checkAccess('Admin'),
+                                        // 'visible' => Yii::app()->user->checkAccess('staff'),
                                     ],
                                     [
                                         'label'   => '<i class="fa fa-tags"></i> Thu hoạt động',
                                         'url'     => array('/aNewsCategory'),
-                                        'visible' => Yii::app()->user->checkAccess('Admin'),
+                                        // 'visible' => Yii::app()->user->checkAccess('staff'),
                                     ],
                                 ]
                             ],
                             [
                                 'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ NGUỒN VỐN',
                                 'url'     => array('/aNewsCategory'),
-                                'visible' => Yii::app()->user->checkAccess('aNews.*'),
+                                // 'visible' => Yii::app()->user->checkAccess('aNews.*'),
                             ],
-                            [
-                                'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ NHÂN VIÊN',
-                                'url'     => array('/aNewsCategory'),
-                                'visible' => Yii::app()->user->checkAccess('aNews.*'),
-                            ],
+                            // [
+                            //     'label'   => '<i class="fa fa-tags"></i> QUẢN LÝ NHÂN VIÊN',
+                            //     'url'     => array('user/admin'),
+                            //     'visible' => Yii::app()->user->checkAccess('admin_shop'),
+                            // ],
                         ),
                     )
                 );
@@ -134,7 +134,7 @@
                         array(
                             'url'     => array('/user/admin'),
                             'label'   => '<i class="fa fa-cogs"></i> Quản lý tài khoản',
-                            'visible' => (Yii::app()->user->checkAccess('User.Admin.Admin') || Yii::app()->user->checkAccess('User.Admin.*')),
+                            'visible' => (Yii::app()->user->checkAccess('Admin') || Yii::app()->user->checkAccess('admin_shop')),
                         ),
                         array(
                             'url'     => array('/user'),

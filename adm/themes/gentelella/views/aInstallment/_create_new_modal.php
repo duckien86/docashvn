@@ -109,9 +109,7 @@ $this->beginWidget(
 		/* set lại index để datepicker ko bị ẩn sau modal */
 		z-index: 9999 !important;
 	}
-</style>
 
-<style>
 	.modal-dialog {
 		width: 700px;
 	}

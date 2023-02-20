@@ -20,7 +20,7 @@ return false;
 ");
 ?>
 <!-- top tiles -->
-<?php $this->renderPartial('_top_summary', ['model' => $model]); ?>
+<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
 <!-- /top tiles -->
 
 <!-- table -->
@@ -33,9 +33,10 @@ return false;
 
 	echo CHtml::button('Tạo mới', ['data-toggle' => 'modal', 'data-target' => "#$modalCreateNewID", 'class' => 'btn btn-primary btn-sm',]);
 	// modal form tạo mới hợp đồng
-	$this->renderPartial('_create_new_modal', ['model' => $model, 'modalID' => $modalCreateNewID,]);
+	$this->renderPartial('_create_new_modal', ['model' => $model, 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
 	// modal form thanh toán tiền 
-	$this->renderPartial('_payment_modal', ['model' => $model, 'modalID' => $modalInstallmentPayment,]);
+	$this->renderPartial('_payment_modal', ['modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
+	// $this->renderPartial('_payment_modal', ['model' => $model, 'modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
 
 	// bảng danh sách
 	$this->widget('booster.widgets.TbGridView', array(

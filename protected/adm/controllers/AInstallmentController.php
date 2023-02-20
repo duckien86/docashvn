@@ -34,11 +34,7 @@ class AInstallmentController extends Controller
      * Creates a new model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * TODO: 
-     * 1. Lấy dữ liệu của shop
-     * 2. Lấy dữ liệu người xử lý bát họ
      * 3. Thêm chức năng thu tiền
-     * 4. Khi tạo mới 1 hợp đồng cần kiểm tra có đủ tiền hay không?
-     * 5. Trừ tiền quỹ khi tạo thành công hợp đồng.
      * 
      */
     public function actionCreate()
@@ -131,6 +127,8 @@ class AInstallmentController extends Controller
 
     /**
      * Manages all models.
+     * TODO: 
+     * 1. Nếu là superadmin cần chọn đc cửa hàng để xem
      */
     public function actionAdmin()
     {
@@ -141,8 +139,44 @@ class AInstallmentController extends Controller
 
         $this->render('admin', array(
             'model' => $model,
+            'shop_id' => isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : null,
         ));
     }
+
+    /**
+     * Khởi tạo dữ liệu form thanh toán 
+     */
+    public function actionInitPaymentForm()
+    {
+        $aryReturn = ['payment_modal_top' => null, 'payment_modal_body' => null,];
+        $id = Yii::app()->request->getParam('id', false);
+        $shopId = isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false;
+        if ($id && $shopId) {
+            // Lấy dữ liệu hợp đồng
+            $installment = new AInstallment;
+
+            $modalInstallmentPayment = 'modal-installment-payment';
+
+            $aryReturn['payment_modal_top'] = $this->renderPartial('_payment_modal_top', array(
+                'installment' => $installment->getData($id, $shopId),
+                'modalID' => $modalInstallmentPayment,
+            ), true);
+        }
+
+        echo CJSON::encode($aryReturn);
+        // $model = new AInstallment('search');
+        // $model->unsetAttributes(); // clear any default values
+        // if (isset($_GET['AInstallment']))
+        //     $model->attributes = $_GET['AInstallment'];
+
+        // $this->render('admin', array(
+        //     'model' => $model,
+        //     'shop_id' => isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : null,
+        // ));
+    }
+
+
+
 
     /**
      * Returns the data model based on the primary key given in the GET variable.

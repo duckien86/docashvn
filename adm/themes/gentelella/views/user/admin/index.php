@@ -17,7 +17,7 @@ $this->breadcrumbs = array(
                 <?php
                 echo $this->renderPartial('_menu', array(
                     'list' => array(
-                        CHtml::link(UserModule::t('Create User'), array('create')),
+                        CHtml::link('Thêm nhân viên', array('create')),
                     ),
                 ));
                 ?>

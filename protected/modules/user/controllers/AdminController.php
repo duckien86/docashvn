@@ -76,13 +76,14 @@ class AdminController extends Controller
         $profile = new Profile;
         if (isset($_POST['User'])) {
 
-            $model->save();
+            // $model->save();
 
             $model->attributes = $_POST['User'];
             $model->activkey   = Yii::app()->controller->module->encrypting(microtime() . $model->password);
             $model->createtime = time();
             $model->lastvisit  = time();
             $model->parent_id  = Yii::app()->user->id;
+            $model->shop_id  = Yii::app()->user->shop_id;
             $p                 = new CHtmlPurifier();
             $model->username   = $p->purify($model->username);
             if (empty($model->email)) {
@@ -125,6 +126,7 @@ class AdminController extends Controller
             $_POST['Profile']['lastname']  = $p->purify($_POST['Profile']['lastname']);
             $model->attributes             = $_POST['User'];
             $profile->attributes           = $_POST['Profile'];
+            $model->shop_id  = Yii::app()->user->shop_id;
 
             if ($model->validate() && $profile->validate()) {
                 // $old_password = User::model()->notsafe()->findByPk($model->id);

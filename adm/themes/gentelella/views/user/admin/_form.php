@@ -18,7 +18,7 @@
     <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'username', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <?php echo CHtml::activeTextField($model, 'username', array('class' => 'form-control col-md-7 col-xs-12', 'size' => 20, 'maxlength' => 20)); ?>
+            <?php echo CHtml::activeTextField($model, 'username', array('class' => 'form-control col-md-7 col-xs-12', 'size' => 20, 'maxlength' => 20, 'autocomplete' => "off")); ?>
             <ul class="parsley-errors-list">
                 <li><?php echo CHtml::error($model, 'username', array('class' => 'parsley-required')); ?></li>
             </ul>
@@ -28,7 +28,7 @@
     <div class="form-group">
         <?php echo CHtml::activeLabelEx($model, 'password', array('class' => 'control-label col-md-3 col-sm-3 col-xs-12')); ?>
         <div class="col-md-6 col-sm-6 col-xs-12">
-            <?php echo CHtml::activePasswordField($model, 'password', array('placeHolder' => 'Để trống nếu không muốn đổi mật khẩu', 'class' => 'form-control col-md-7 col-xs-12', 'size' => 60, 'maxlength' => 128)); ?>
+            <?php echo CHtml::activePasswordField($model, 'password', array('placeHolder' => 'Để trống nếu không muốn đổi mật khẩu', 'class' => 'form-control col-md-7 col-xs-12', 'size' => 60, 'maxlength' => 128, 'autocomplete' => "off")); ?>
             <ul class="parsley-errors-list">
                 <li><?php echo CHtml::error($model, 'password', array('class' => 'parsley-required')); ?></li>
             </ul>
@@ -103,6 +103,7 @@
 </div><!-- form -->
 
 <script>
-    $('#User_username').val('');
-    $('#User_password').val('');
+    $(document).ready(function() {
+        $('form').find('input:text, input:password, input:email, textarea').val('');
+    });
 </script>

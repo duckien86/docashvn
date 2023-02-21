@@ -363,8 +363,11 @@ class AInstallment extends Installment
 
 	/**
 	 * Lấy dữ liệu về hợp đồng vay họ
+	 * @param $details boolean : Xác định xem có cần lấy details không
+	 * @param $calculateAll boolean : Có muốn cần tính toán các tham số không
+	 * @return AInstallment
 	 */
-	public static function loadContract($installmentId, $shopId)
+	public static function loadContract($installmentId, $shopId, $details = true, $calculateAll = true)
 	{
 		if (empty($installmentId) && empty($shopId)) return false;
 
@@ -375,7 +378,8 @@ class AInstallment extends Installment
 		$installment = AInstallment::model()->find($criteria);
 		if ($installment) {
 			$installment->loadContractDetails();
-			$installment->calculateAll();
+			if ($calculateAll)
+				$installment->calculateAll();
 		}
 
 		return $installment;

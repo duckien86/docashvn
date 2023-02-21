@@ -43,25 +43,33 @@
 
 <script>
 	function doPayment(installment_id, item_id) {
+
+		var current_modal_id = '#<?= $modalID ?>';
+		const current_modal = $(current_modal_id);
+
 		$.ajax({
-			url: '<?= $this->createUrl('aInstallment/initPaymentForm') ?>',
+			url: '<?= $this->createUrl('aInstallment/doPayment') ?>',
 			type: 'POST',
 			data: {
-				id: id,
+				installment_id: installment_id,
+				item_id: item_id,
 				'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken ?>'
 			},
 			dataType: 'json',
 			success: function(response) {
 
-				if (response.payment_modal_top != null) { // Có dữ liệu
-					current_modal.find('#_payment_modal_top_area').html(response.payment_modal_top);
+				if (response.ok == true) { // Có dữ liệu
+					new PNotify({
+						title: 'Thao tác thành công!',
+						// text: 'Khách hàng +' + data.customer_name,
+						type: 'info'
+					});
 				} else {
-					current_modal.find('#_payment_modal_top_area').html('Không có dữ liệu');
-				}
-				if (response.payment_modal_body != null) { // Có dữ liệu
-					current_modal.find('#_payment_modal_body_area').html(response.payment_modal_body);
-				} else {
-					current_modal.find('#_payment_modal_body_area').html('Không có dữ liệu');
+					new PNotify({
+						title: 'Thao tác thất bại!',
+						// text: 'Khách hàng +' + data.customer_name,
+						type: 'error'
+					});
 				}
 				// Handle the successful response
 			},

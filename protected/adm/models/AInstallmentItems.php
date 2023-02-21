@@ -137,4 +137,39 @@ class AInstallmentItems extends InstallmentItems
 	{
 		return	$displayFormat ? Utils::numberFormat($this->transAmount) : $this->transAmount;
 	}
+
+	/**
+	 * Thực hiện giao dịch nộp tiền bát họ hoặc hủy nộp tiền
+	 */
+	public function doPayment($installment, $amountOther = false)
+	{
+		$transaction = new ATransactions;
+		$createBy = $installment->create_by;
+		$shopId = $installment->shop_id;
+		$customerName = $installment->customer_name;
+		$amount = $amountOther ? $amountOther : $this->amount;
+		$ref_id = $installment->id;
+
+		if (empty($this->transaction_id)) {
+			$note = 'Nộp tiền bát họ';
+			$groupId = 'installment_paid';
+
+			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
+				$this->transaction_id = $transaction->id;
+				return $this->save();
+			}
+		} else {
+			$note = 'Hủy nộp tiền bát họ';
+			$groupId = 'installment_paid_cancel';
+			$transaction = ATransactions::model()->findByPk($this->transaction_id);
+			if ($transaction) {
+				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
+					$this->transaction_id = $transaction->id;
+					return $this->save();
+				}
+			}
+		}
+
+		return false;
+	}
 }

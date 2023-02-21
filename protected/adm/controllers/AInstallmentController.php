@@ -201,4 +201,45 @@ class AInstallmentController extends Controller
 
         echo CJSON::encode($aryReturn);
     }
+
+    /**
+     * Ajax request
+     * Khởi tạo dữ liệu form thanh toán 
+     */
+    public function actionDoPayment()
+    {
+        $aryReturn = ['ok' => false];
+        $installment_id = Yii::app()->request->getParam('installment_id', false);
+        $item_id = Yii::app()->request->getParam('item_id', false);
+        $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
+
+        if ($installment_id && $item_id) {
+
+            // Khai báo modal id
+            $modalID = 'modal-installment-payment';
+
+            $installment = AInstallment::loadContract($installment_id, $shopId, true, false);
+            foreach ($installment->items as $item) {
+                if ($item->id == $item_id) {
+                    if ($item->doPayment($installment)) {
+                        $aryReturn['ok'] = true;
+                    }
+                }
+            }
+
+
+            // if ($installment) {
+            //     $aryReturn['payment_modal_top'] = $this->renderPartial('_payment_modal_top', array(
+            //         'installment' => $installment,
+            //         'modalID' => $modalID,
+            //     ), true);
+            //     $aryReturn['payment_modal_body'] = $this->renderPartial('_payment_modal_body', array(
+            //         'items' => $installment->items,
+            //         'modalID' => $modalID,
+            //     ), true);
+            // }
+        }
+
+        echo CJSON::encode($aryReturn);
+    }
 }

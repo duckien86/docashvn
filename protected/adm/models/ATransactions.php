@@ -119,13 +119,18 @@ class ATransactions extends Transactions
 	{
 		$this->type = self::TYPE_INCOMING;
 		$this->create_by = $create_by;
+		$this->create_date = date('Y-m-d H:i:s');
 		$this->shop_id = $shop_id;
 		$this->customer = $customer;
 		$this->amount = abs($amount);
 		$this->note = $note;
 		$this->group_id = $group_id;
 		$this->ref_id = $ref_id;
-		$this->save();
+
+		if (!$this->save()) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

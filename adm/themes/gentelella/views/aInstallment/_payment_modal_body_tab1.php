@@ -59,6 +59,7 @@
 			success: function(response) {
 
 				if (response.ok == true) { // Có dữ liệu
+					initPaymentForm(installment_id);
 					new PNotify({
 						title: 'Thao tác thành công!',
 						// text: 'Khách hàng +' + data.customer_name,

@@ -164,7 +164,7 @@ class AInstallmentItems extends InstallmentItems
 			$transaction = ATransactions::model()->findByPk($this->transaction_id);
 			if ($transaction) {
 				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
-					$this->transaction_id = $transaction->id;
+					$this->transaction_id = '';
 					return $this->save();
 				}
 			}

@@ -151,7 +151,7 @@ class ATransactions extends Transactions
 	/**
 	 * Trả về số tiền quỹ của 1 cửa hàng
 	 */
-	public static function getCurrentBalance($shop_id, $format = false)
+	public static function loadCurrentBalance($shop_id, $format = false)
 	{
 		$command = Yii::app()->db->createCommand();
 		$balance = $command->select('sum(amount)')

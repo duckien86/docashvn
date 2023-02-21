@@ -75,7 +75,7 @@ $this->beginWidget(
 					current_modal.find('#_payment_modal_top_area').html('Không có dữ liệu');
 				}
 				if (response.payment_modal_body != null) { // Có dữ liệu
-					current_modal.find('#_payment_modal_body_area').html(response.payment_modal_top);
+					current_modal.find('#_payment_modal_body_area').html(response.payment_modal_body);
 				} else {
 					current_modal.find('#_payment_modal_body_area').html('Không có dữ liệu');
 				}

@@ -27,7 +27,7 @@
 			<div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
 				<?php
 				echo $this->renderPartial('_payment_modal_body_tab1', array(
-					'model' => $model,
+					'items' => $items,
 					'modalID' => $modalID,
 				));
 				?>

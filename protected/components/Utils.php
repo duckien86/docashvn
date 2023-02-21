@@ -448,7 +448,7 @@ class Utils
         }
     }
 
-    public static function converstDate($inputFomat, $targetFomat, $inputDate)
+    public static function convertDate($inputFomat, $targetFomat, $inputDate)
     {
         // $inputDate = '14/02/2023'; // input date string
         // $inputFomat = 'd/m/Y'; // input format string

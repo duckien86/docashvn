@@ -12,6 +12,13 @@
  */
 class AInstallmentItems extends InstallmentItems
 {
+	// Tiền nộp trong giao dịch
+	public $transAmount;
+	// Ngày giao dịch
+	public $transDate;
+	// Ghi chú giao dịch
+	public $transNote;
+
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -85,6 +92,21 @@ class AInstallmentItems extends InstallmentItems
 	}
 
 	/**
+	 * Lấy dữ liệu kèm thông tin giao dịch
+	 */
+	public function loadTransaction($installmentId, $toDate = false)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->select = 't.*,t1.amount as transAmount, t1.create_date as transDate, t1.note as transNote';
+		$criteria->join = 'LEFT JOIN tbl_transactions t1 ON t.transaction_id = t1.id ';
+		$criteria->compare('installment_id', $installmentId, true);
+		if ($toDate)
+			$criteria->condition = "t.payment_date < '$toDate'";
+
+		return $this->findAll($criteria);
+	}
+
+	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
@@ -93,5 +115,26 @@ class AInstallmentItems extends InstallmentItems
 	public static function model($className = __CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function calPaymentDate($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $this->payment_date) : $this->payment_date;
+	}
+
+	public function calTransDate($displayFormat = true)
+	{
+		$transDate = !empty($this->transDate) ? date('Y-m-d', strtotime($this->transDate)) : false;
+		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $transDate) : $this->transDate;
+	}
+
+	public function calAmount($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->amount) : $this->amount;
+	}
+
+	public function calTransAmount($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->transAmount) : $this->transAmount;
 	}
 }

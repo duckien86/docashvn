@@ -2,31 +2,31 @@
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Quỹ tiền mặt</span>
-			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::getCurrentBalance($shop_id, true) : ''; ?></div>
+			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::loadCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Tiền cho vay</span>
-			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::getCurrentBalance($shop_id, true) : ''; ?></div>
+			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::loadCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i>Tiền nợ</span>
-			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::getCurrentBalance($shop_id, true) : ''; ?></div>
+			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::loadCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count pull-right">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Phí lãi đã thu</span>
-			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::getCurrentBalance($shop_id, true) : ''; ?></div>
+			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::loadCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count pull-right">
 		<div class="right">
 			<span class="count_top"><i class="fa fa-usd"></i> Lãi dự kiến</span>
-			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::getCurrentBalance($shop_id, true) : ''; ?></div>
+			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::loadCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 

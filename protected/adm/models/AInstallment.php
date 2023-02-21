@@ -24,9 +24,19 @@
  */
 class AInstallment extends Installment
 {
+	// quỹ tiền mặt hiện tại
 	public $currentBalance;
-	// public $endDate;
+	// số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
+	public $overBalance;
+	// Tiền đã đóng
+	public $paidAmount;
+	// Tiền còn lại phải trả
+	public $remainMoney;
 
+	/**
+	 * chi tiết hợp đồng
+	 * @return AInstallmentItems
+	 */
 	public $items;
 	/**
 	 * @return array validation rules for model attributes.
@@ -51,23 +61,128 @@ class AInstallment extends Installment
 		);
 	}
 
-	public function getDisplayEndDate()
+	/**
+	 * Tính toán số tiền đã trả
+	 * Tính toán số tiền còn dư hoặc nợ của khách
+	 * Tính toán số tiền còn lại phải trả
+	 * 
+	 * @return void
+	 */
+	public function calculateAll()
 	{
-		$endDate = date('Y-m-d', strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
-		return	Utils::converstDate('Y-m-d', 'd/m/Y', $endDate);
+		$this->paidAmount = 0;
+		$this->overBalance = 0;
+		$paymentByToday = 0; // số tiền phải trả tới hôm nay
+
+		if (empty($this->items)) {
+			$installmentItems = new AInstallmentItems();
+			$this->items = $installmentItems->loadTransaction($this->id);
+		}
+		foreach ($this->items as $item) {
+			if (!empty($item->transaction_id)) {
+				$this->paidAmount += $item->transAmount;
+			}
+			if (strtotime($item->payment_date) <= time()) {
+				$paymentByToday += $item->amount;
+			}
+		}
+		// tính toán số tiền còn dư hoặc nợ của khách
+		$this->overBalance = $this->paidAmount - $paymentByToday;
+		// tính toán số tiền còn lại phải trả
+		$this->remainMoney = $this->total_money - $this->paidAmount;
 	}
 
-	public function getDisplayStartDate()
+	/**
+	 * Số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
+	 * @return string,float 
+	 */
+	public function calOverBalance($displayFormat = true)
 	{
-		return	Utils::converstDate('Y-m-d', 'd/m/Y', $this->start_date);
+		return	$displayFormat ? Utils::numberFormat($this->overBalance) : $this->overBalance;
 	}
+
+
+	/**
+	 * Tính toán số tiền còn lại cần trả
+	 * @return string,float
+	 */
+	public function calRemainMoney($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->remainMoney) : $this->remainMoney;
+	}
+
+	/**
+	 * Tính toán số tiền đã trả
+	 * 
+	 * @return string,float 
+	 */
+	public function calPaidAmount($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->paidAmount) : $this->paidAmount;
+	}
+
+	/**
+	 * Tính toán tỉ lể ăn lãi
+	 * @return string
+	 */
+	public function calInterestRate()
+	{
+		$interestRate = round($this->receive_money / $this->total_money * 10, 2);
+		return	"10 ăn <b>$interestRate</b>";
+	}
+
+	/**
+	 * Tính toán lãi phí
+	 * @return string,float 
+	 */
+	public function calInterestFee($displayFormat = true)
+	{
+		$value = $this->total_money - $this->receive_money;
+		return	$displayFormat ? Utils::numberFormat($value) : $value;
+	}
+
+	/**
+	 * Transform to display string
+	 * @return string,float 
+	 */
+	public function calTotalMoney($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->total_money) : $this->total_money;
+	}
+	/**
+	 * Transform to display string
+	 * @return string,float 
+	 */
+	public function calReceiveMoney($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->receive_money) : $this->receive_money;
+	}
+	/**
+	 * Transform to display string
+	 * @return string
+	 */
+	public function calEndDate($displayFormat = true)
+	{
+		$endDate = date('Y-m-d', strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
+		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $endDate) : $endDate;
+	}
+
+	/**
+	 * Transform to display string
+	 * @return string
+	 */
+	public function calStartDate($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $this->start_date) : $this->start_date;
+	}
+
 
 	public function beforeValidate()
 	{
 		if (parent::beforeValidate()) {
 			$this->total_money = str_replace('.', '', $this->total_money);
 			$this->receive_money = str_replace('.', '', $this->receive_money);
-			$this->start_date =  Utils::converstDate('d/m/Y', 'Y-m-d', $this->start_date);
+			$this->start_date =  Utils::convertDate('d/m/Y', 'Y-m-d', $this->start_date);
 
 			return true;
 		} else {
@@ -80,7 +195,7 @@ class AInstallment extends Installment
 	 */
 	public function checkEnough($attribute, $params)
 	{
-		$this->currentBalance = ATransactions::getCurrentBalance($this->shop_id);
+		$this->currentBalance = ATransactions::loadCurrentBalance($this->shop_id);
 
 		if ($this->currentBalance < $this->receive_money) {
 			$this->addError($attribute, $params['message'] . "(" . Utils::numberFormat($this->currentBalance) . " đ)");
@@ -168,10 +283,10 @@ class AInstallment extends Installment
 		return parent::model($className);
 	}
 
-	public function genContractId()
-	{
-		$prefix = 'BH';
-	}
+	// public function genContractId()
+	// {
+	// 	$prefix = 'BH';
+	// }
 
 	/**
 	 * Tính chi tiết số tiền và ngày phải đóng tiền
@@ -227,17 +342,17 @@ class AInstallment extends Installment
 	/**
 	 * 
 	 */
-	public function createContract()
-	{
-		if ($this->save()) { // lưu hợp đồng
-			if ($this->generateItems()) { // thêm chi tiết lịch đóng tiền
-				// thực hiện thêm giao dịch chi tiền
-				// ATransactions::outgoingPayment($this->create_by, $this->shop_id, $this->customer_name, $this->receive_money, 'Khách vay bát họ', 'inst_create', $this->id);
-			}
-		}
-		$error = CHtml::errorSummary($this);
-		return false;
-	}
+	// public function createContract()
+	// {
+	// 	if ($this->save()) { // lưu hợp đồng
+	// 		if ($this->generateItems()) { // thêm chi tiết lịch đóng tiền
+	// 			return true;
+	// 			// thực hiện thêm giao dịch chi tiền
+	// 			// ATransactions::outgoingPayment($this->create_by, $this->shop_id, $this->customer_name, $this->receive_money, 'Khách vay bát họ', 'inst_create', $this->id);
+	// 		}
+	// 	}
+	// 	return false;
+	// }
 
 
 	public function cancel()
@@ -249,7 +364,7 @@ class AInstallment extends Installment
 	/**
 	 * Lấy dữ liệu về hợp đồng vay họ
 	 */
-	public function getData($installmentId, $shopId)
+	public static function loadContract($installmentId, $shopId)
 	{
 		if (empty($installmentId) && empty($shopId)) return false;
 
@@ -259,10 +374,19 @@ class AInstallment extends Installment
 		$criteria->compare('shop_id', $shopId);
 		$installment = AInstallment::model()->find($criteria);
 		if ($installment) {
-			$installmentItems = AInstallmentItems::model()->findAllByAttributes(['installment_id' => $installmentId]);
-			$installment->items = $installmentItems;
+			$installment->loadContractDetails();
+			$installment->calculateAll();
 		}
 
 		return $installment;
+	}
+
+	/**
+	 * Lấy dữ liệu chi tiết của hợp đồng vay
+	 */
+	public function loadContractDetails()
+	{
+		$installmentItems = new AInstallmentItems();
+		$this->items = $installmentItems->loadTransaction($this->id);
 	}
 }

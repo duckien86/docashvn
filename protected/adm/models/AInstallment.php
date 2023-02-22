@@ -39,10 +39,20 @@ class AInstallment extends Installment
 	 */
 	public $items;
 	/**
-	 * chi tiết hợp đồng
+	 * chi tiết giao dịch hợp đồng
 	 * @return ATransactions
 	 */
 	public $transHistory;
+
+	// Cấu hình nhóm giao dịch : Yii::app()->params['trans_group_id']
+	const TRANS_GRP_CREATE = 'bh_create';
+	const TRANS_GRP_PAID = 'bh_paid';
+	const TRANS_GRP_PAID_CANCEL = 'bh_paid_cancel';
+
+	// Cấu hình trạng thái hợp đồng
+	const STATUS_OPEN = 1;
+	const STATUS_CLOSE = 0;
+
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -200,7 +210,7 @@ class AInstallment extends Installment
 	 */
 	public function checkEnough($attribute, $params)
 	{
-		$this->currentBalance = ATransactions::loadCurrentBalance($this->shop_id);
+		$this->currentBalance = ATransactions::sumCurrentBalance($this->shop_id);
 
 		if ($this->currentBalance < $this->receive_money) {
 			$this->addError($attribute, $params['message'] . "(" . Utils::numberFormat($this->currentBalance) . " đ)");
@@ -345,22 +355,57 @@ class AInstallment extends Installment
 	}
 
 	/**
-	 * 
+	 * Tạo hợp đồng bát họ
 	 */
-	// public function createContract()
-	// {
-	// 	if ($this->save()) { // lưu hợp đồng
-	// 		if ($this->generateItems()) { // thêm chi tiết lịch đóng tiền
-	// 			return true;
-	// 			// thực hiện thêm giao dịch chi tiền
-	// 			// ATransactions::outgoingPayment($this->create_by, $this->shop_id, $this->customer_name, $this->receive_money, 'Khách vay bát họ', 'inst_create', $this->id);
-	// 		}
-	// 	}
-	// 	return false;
-	// }
+	public function createContract($inputData, &$errors)
+	{
+		$this->attributes = $inputData;
+		if (!Yii::app()->user->super_admin) { // set mã cửa hàng theo user đăng nhập
+			$this->shop_id = Yii::app()->user->shop_id;
+		}
+		$this->create_date = date('Y-m-d H:i:s');
+		$this->create_by = Yii::app()->user->id;
+		$this->status = self::STATUS_OPEN;
+		if ($this->save()) {
+			if ($this->generateItems()) {
+				// thực hiện thêm giao dịch chi tiền
+				$transaction = new ATransactions;
+				$createBy = $this->create_by;
+				$shopId = $this->shop_id;
+				$customerName = $this->customer_name;
+				$amount = $this->receive_money;
+				$ref_id = $this->id;
+				$transGroupId = self::TRANS_GRP_CREATE;
+				$note = Yii::app()->params['trans_group_id'][self::TRANS_GRP_CREATE];
 
+				if (!$transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $transGroupId, $ref_id)) {
+					$errors = CHtml::errorSummary($transaction);
+					$this->clearAllData();
+					return false;
+				}
+			} else { // Có lỗi trong quá trình 
+				$errors = 'Không thể tạo lịch đóng tiền';
+				return false;
+			}
+		} else {
+			$errors = CHtml::errorSummary($this);
+			return false;
+		}
+		return true;
+	}
 
-	public function cancel()
+	/**
+	 * Đóng hợp đồng
+	 */
+	public function closeContract(&$errors)
+	{
+		# code...
+	}
+
+	/**
+	 * Xóa bỏ hợp đồng và dữ liệu liên quan
+	 */
+	protected function clearAllData()
 	{
 		AInstallmentItems::model()->deleteAllByAttributes(['installment_id' => $this->id]);
 		$this->delete();
@@ -406,5 +451,63 @@ class AInstallment extends Installment
 	{
 		$trans = new ATransactions();
 		$this->transHistory = $trans->loadHistory($this->id);
+	}
+
+	/**
+	 * Tổng số tiền đang cho vay
+	 */
+	public static function loadTotalLending($shop_id, $format = false)
+	{
+		$balance = abs(ATransactions::sumByGroup($shop_id, AInstallment::TRANS_GRP_CREATE));
+		return ($format) ? Utils::numberFormat($balance) : $balance;
+	}
+
+	/**
+	 * Tính lãi phí dự kiến 
+	 */
+	public static function loadExpectedInterest($shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(total_money - receive_money)')
+			->from('tbl_installment')
+			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
+			->queryScalar();
+		return ($format) ? Utils::numberFormat($total) : $total;
+	}
+
+	/**
+	 * Tính lãi phí đã thu
+	 */
+	public static function loadPaidInterest($shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(t1.amount)')
+			->from('tbl_installment_items t')
+			->join('tbl_transactions t1', 't1.id = t.transaction_id')
+			->join('tbl_installment t3', 't3.id = t.installment_id')
+			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
+			->queryScalar();
+
+		return ($format) ? Utils::numberFormat($total) : $total;
+	}
+
+	/**
+	 * Tính nợ còn phải thu (bảo gồm tiền chưa nộp hoặc nộp thiếu)
+	 */
+	public static function loadDebt($shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(t.amount) - sum(COALESCE(t1.amount,0))')
+			->from('tbl_installment_items t')
+			->leftJoin('tbl_transactions t1', 't1.id = t.transaction_id')
+			->join('tbl_installment t3', 't3.id = t.installment_id')
+			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
+			->andWhere("t.payment_date <= NOW()")
+			// ->getText();
+			->queryScalar();
+
+		return ($format) ? Utils::numberFormat($total) : $total;
 	}
 }

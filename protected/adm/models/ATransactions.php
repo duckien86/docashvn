@@ -155,14 +155,28 @@ class ATransactions extends Transactions
 	}
 
 	/**
-	 * Trả về số tiền quỹ của 1 cửa hàng
+	 * Trả về số tiền quỹ hiện tại của 1 cửa hàng
 	 */
-	public static function loadCurrentBalance($shop_id, $format = false)
+	public static function sumCurrentBalance($shop_id, $format = false)
 	{
 		$command = Yii::app()->db->createCommand();
 		$balance = $command->select('sum(amount)')
 			->from('tbl_transactions')
 			->where('shop_id =:shop_id', [':shop_id' => $shop_id])
+			->queryScalar();
+		return ($format) ? Utils::numberFormat($balance) : $balance;
+	}
+
+	/**
+	 * Trả về số tiền đang cho vay của cửa hàng theo loại hình kinh doanh
+	 */
+	public static function sumByGroup($shop_id, $group_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$balance = $command->select('sum(amount)')
+			->from('tbl_transactions')
+			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("group_id=:group_id", [':group_id' => $group_id])
 			->queryScalar();
 		return ($format) ? Utils::numberFormat($balance) : $balance;
 	}

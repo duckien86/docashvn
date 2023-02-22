@@ -7,6 +7,7 @@
  * @property integer $id
  * @property string $name
  * @property integer $in_out
+ * @property string $code
  * @property integer $sort_index
  * @property integer $status
  */
@@ -29,10 +30,11 @@ class TransactionCategory extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('in_out, sort_index, status', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>255),
+			array('name', 'length', 'max'=>100),
+			array('code', 'length', 'max'=>14),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, in_out, sort_index, status', 'safe', 'on'=>'search'),
+			array('id, name, in_out, code, sort_index, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,6 +58,7 @@ class TransactionCategory extends CActiveRecord
 			'id' => 'ID',
 			'name' => 'Name',
 			'in_out' => 'In Out',
+			'code' => 'Code',
 			'sort_index' => 'Sort Index',
 			'status' => 'Status',
 		);
@@ -82,6 +85,7 @@ class TransactionCategory extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('in_out',$this->in_out);
+		$criteria->compare('code',$this->code,true);
 		$criteria->compare('sort_index',$this->sort_index);
 		$criteria->compare('status',$this->status);
 

@@ -139,7 +139,8 @@ class AInstallmentItems extends InstallmentItems
 	}
 
 	/**
-	 * Thực hiện giao dịch nộp tiền bát họ hoặc hủy nộp tiền
+	 * Thực hiện giao dịch 
+	 * nộp tiền bát họ || hủy nộp tiền
 	 */
 	public function doPayment($installment, $amountOther = false)
 	{
@@ -151,18 +152,19 @@ class AInstallmentItems extends InstallmentItems
 		$ref_id = $installment->id;
 
 		if (empty($this->transaction_id)) {
-			$note = 'Nộp tiền bát họ';
-			$groupId = 'installment_paid';
+			$transGroupId = AInstallment::TRANS_GRP_PAID;
+			$note = Yii::app()->params['trans_group_id'][AInstallment::TRANS_GRP_PAID];
 
-			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
+			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $note, $transGroupId, $ref_id)) {
 				$this->transaction_id = $transaction->id;
 				return $this->save();
 			}
 		} else {
-			$note = 'Hủy nộp tiền bát họ';
-			$groupId = 'installment_paid_cancel';
+			$transGroupId = AInstallment::TRANS_GRP_PAID_CANCEL;
+			$note = Yii::app()->params['trans_group_id'][AInstallment::TRANS_GRP_PAID_CANCEL];
+
 			if ($transaction) {
-				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
+				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $transGroupId, $ref_id)) {
 					$this->transaction_id = '';
 					return $this->save();
 				}

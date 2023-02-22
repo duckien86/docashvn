@@ -142,30 +142,10 @@ class AInstallmentController extends Controller
         // $this->performAjaxValidation($installment);
 
         if (isset($_POST['AInstallment'])) {
-            $installment->attributes = $_POST['AInstallment'];
-            if (!Yii::app()->user->super_admin) { // set mã cửa hàng theo user đăng nhập
-                $installment->shop_id = Yii::app()->user->shop_id;
-            }
-            $installment->create_date = date('Y-m-d H:i:s');
-            $installment->create_by = Yii::app()->user->id;
 
-            if ($installment->save()) {
-                if ($installment->generateItems()) {
-                    // thực hiện thêm giao dịch chi tiền
-                    $transaction = new ATransactions;
-                    if (!$transaction->outgoingPayment($installment->create_by, $installment->shop_id, $installment->customer_name, $installment->receive_money, 'Khách vay bát họ', 'installment_create', $installment->id)) {
-                        $response['ok'] = false;
-                        $response['error'] = CHtml::errorSummary($transaction);
-                        $installment->cancel();
-                    }
-                } else { // Có lỗi trong quá trình 
-                    $response['ok'] = false;
-                    $response['error'] = 'Xảy ra lỗi trong quá trình tạo hợp đồng';
-                }
-                $response['data'] = $installment->attributes;
-            } else {
+            if (!$installment->createContract($_POST['AInstallment'], $errors)) {
                 $response['ok'] = false;
-                $response['error'] = CHtml::errorSummary($installment);
+                $response['error'] = $errors;
             }
         }
         echo CJSON::encode($response);

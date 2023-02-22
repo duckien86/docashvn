@@ -9,15 +9,6 @@
 				<th class="column-title">Người TH </th>
 				<th class="column-title">Số tiền </th>
 				<th class="column-title">Nội dung </th>
-				<!-- <th class="column-title no-link last"><span class="nobr"></span> -->
-				<!-- </th> -->
-				<!-- <th class="bulk-actions" colspan="7">
-					<a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
-				</th> -->
-				<!-- <th> -->
-				<!-- <input type="checkbox" id="check-all" class="flat"> -->
-				</th>
-
 			</tr>
 		</thead>
 		<tbody>

@@ -13,40 +13,6 @@
 class ATransactionCategory extends TransactionCategory
 {
 	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return '{{transaction_category}}';
-	}
-
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('in_out, sort_index, status', 'numerical', 'integerOnly' => true),
-			array('name', 'length', 'max' => 255),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, name, in_out, sort_index, status', 'safe', 'on' => 'search'),
-		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array();
-	}
-
-	/**
 	 * @return array customized attribute labels (name=>label)
 	 */
 	public function attributeLabels()
@@ -57,6 +23,7 @@ class ATransactionCategory extends TransactionCategory
 			'in_out' => 'In Out',
 			'sort_index' => 'Sort Index',
 			'status' => 'Status',
+			'code' => 'Code',
 		);
 	}
 

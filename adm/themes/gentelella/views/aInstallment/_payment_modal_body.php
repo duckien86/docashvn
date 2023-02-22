@@ -42,7 +42,12 @@
 			</div>
 			<!-- Lịch sử -->
 			<div role="tabpanel" class="tab-pane fade" id="tab_content4" aria-labelledby="profile-tab">
-				<p>xxFood truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk </p>
+				<?php
+				echo $this->renderPartial('_payment_modal_body_tab4', array(
+					'items' => $transHistory,
+					'modalID' => $modalID,
+				));
+				?>
 			</div>
 			<!-- Đảo họ -->
 			<div role="tabpanel" class="tab-pane fade" id="tab_content5" aria-labelledby="profile-tab">

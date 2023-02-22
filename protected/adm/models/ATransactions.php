@@ -24,6 +24,7 @@ class ATransactions extends Transactions
 	const  TYPE_INCOMING = 1; // thu tiền
 	const  TYPE_OUTGOING = 2; // chi tiền
 
+	public $createByUserName;
 	/**
 	 * @return array validation rules for model attributes.
 	 */
@@ -164,5 +165,29 @@ class ATransactions extends Transactions
 			->where('shop_id =:shop_id', [':shop_id' => $shop_id])
 			->queryScalar();
 		return ($format) ? Utils::numberFormat($balance) : $balance;
+	}
+
+	/**
+	 * Lấy dữ liệu giao dịch của hợp đồng
+	 */
+	public function loadHistory($installmentId)
+	{
+		$criteria = new CDbCriteria();
+		$criteria->select = 't.*, t1.username as createByUserName';
+		$criteria->join = 'LEFT JOIN tbl_users t1 ON t.create_by = t1.id';
+		$criteria->compare('ref_id', $installmentId);
+		$criteria->order = 'create_date asc';
+
+		return $this->findAll($criteria);
+	}
+
+	public function calCreateDate($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::convertDate('Y-m-d H:i:s', 'd/m/Y H:i:s', $this->create_date) : $this->create_date;
+	}
+
+	public function calAmount($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->amount) : $this->amount;
 	}
 }

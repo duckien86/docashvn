@@ -161,7 +161,6 @@ class AInstallmentItems extends InstallmentItems
 		} else {
 			$note = 'Hủy nộp tiền bát họ';
 			$groupId = 'installment_paid_cancel';
-			$transaction = ATransactions::model()->findByPk($this->transaction_id);
 			if ($transaction) {
 				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $groupId, $ref_id)) {
 					$this->transaction_id = '';

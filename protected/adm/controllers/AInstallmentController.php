@@ -194,6 +194,7 @@ class AInstallmentController extends Controller
                 ), true);
                 $aryReturn['payment_modal_body'] = $this->renderPartial('_payment_modal_body', array(
                     'items' => $installment->items,
+                    'transHistory' => $installment->transHistory,
                     'modalID' => $modalID,
                 ), true);
             }

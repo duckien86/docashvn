@@ -4,19 +4,18 @@
 	<table class="table table-striped responsive-utilities jambo_table">
 		<thead>
 			<tr class="headings">
-				<th class="column-title">In </th>
 				<th class="column-title">STT </th>
-				<th class="column-title">Ngày họ </th>
-				<th class="column-title">Tiền họ </th>
-				<th class="column-title">Ngày giao dịch </th>
-				<th class="column-title">Tiền khách trả </th>
-				<th class="column-title no-link last"><span class="nobr"></span>
-					<!-- </th> -->
-					<!-- <th class="bulk-actions" colspan="7">
+				<th class="column-title">Ngày GD </th>
+				<th class="column-title">Người TH </th>
+				<th class="column-title">Số tiền </th>
+				<th class="column-title">Nội dung </th>
+				<!-- <th class="column-title no-link last"><span class="nobr"></span> -->
+				<!-- </th> -->
+				<!-- <th class="bulk-actions" colspan="7">
 					<a class="antoo" style="color:#fff; font-weight:500;">Bulk Actions ( <span class="action-cnt"> </span> ) <i class="fa fa-chevron-down"></i></a>
 				</th> -->
-					<!-- <th> -->
-					<!-- <input type="checkbox" id="check-all" class="flat"> -->
+				<!-- <th> -->
+				<!-- <input type="checkbox" id="check-all" class="flat"> -->
 				</th>
 
 			</tr>
@@ -27,13 +26,11 @@
 			foreach ($items as $item) {
 			?>
 				<tr class="even pointer">
-					<td class=" "></td>
 					<td class=" "><?= ++$i ?></td>
-					<td class=" "><?= $item->calPaymentDate(); ?></td>
+					<td class=" "><?= $item->calCreateDate(); ?></td>
+					<td class=" "><?= $item->createByUserName; ?></td>
 					<td class=" "><?= $item->calAmount(); ?></td>
-					<td class=" "><?= $item->calTransDate(); ?></td>
-					<td class=" "><?= $item->calTransAmount(); ?></td>
-					<td class="a-center "><input type="checkbox" <?php if (!empty($item->transaction_id)) echo 'checked'; ?> class="flat" onclick="doPayment(<?= $item->installment_id ?>,<?= $item->id ?>)"></td>
+					<td class=" "><?= $item->note; ?></td>
 				</tr>
 			<?php } ?>
 		</tbody>
@@ -61,14 +58,14 @@
 				if (response.ok == true) { // Có dữ liệu
 					initPaymentForm(installment_id);
 					new PNotify({
-						title: 'Nộp tiền thành công!',
-						// text: 'text in body',
+						title: 'Thao tác thành công!',
+						// text: 'Khách hàng +' + data.customer_name,
 						type: 'info'
 					});
 				} else {
 					new PNotify({
-						title: 'Nộp tiền thất bại!',
-						// text: 'text in body',
+						title: 'Thao tác thất bại!',
+						// text: 'Khách hàng +' + data.customer_name,
 						type: 'error'
 					});
 				}

@@ -39,6 +39,11 @@ class AInstallment extends Installment
 	 */
 	public $items;
 	/**
+	 * chi tiết hợp đồng
+	 * @return ATransactions
+	 */
+	public $transHistory;
+	/**
 	 * @return array validation rules for model attributes.
 	 */
 	public function rules()
@@ -378,6 +383,7 @@ class AInstallment extends Installment
 		$installment = AInstallment::model()->find($criteria);
 		if ($installment) {
 			$installment->loadContractDetails();
+			$installment->loadTransHistory();
 			if ($calculateAll)
 				$installment->calculateAll();
 		}
@@ -392,5 +398,13 @@ class AInstallment extends Installment
 	{
 		$installmentItems = new AInstallmentItems();
 		$this->items = $installmentItems->loadTransaction($this->id);
+	}
+	/**
+	 * Lấy dữ liệu lịch sử giao dịch của hợp đồng vay
+	 */
+	public function loadTransHistory()
+	{
+		$trans = new ATransactions();
+		$this->transHistory = $trans->loadHistory($this->id);
 	}
 }

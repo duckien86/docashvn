@@ -32,6 +32,16 @@ class AInstallment extends Installment
 	public $paidAmount;
 	// Tiền còn lại phải trả
 	public $remainMoney;
+	// Số kì đã đóng tiền
+	public $paidPeriods;
+	// Số kì chưa đóng tiền
+	public $remainPeriods;
+	// Số tiền đóng 1 ngày
+	public $amountPerDay;
+	// Có đang nợ tiền hay không
+	public $inDebt = false;
+	// Ngày đóng tiền kì tới
+	public $nextPaidDate = false;
 
 	/**
 	 * chi tiết hợp đồng
@@ -77,9 +87,11 @@ class AInstallment extends Installment
 	}
 
 	/**
+	 * Tính toáng tất cả thông số liên quan đến 1 hợp đồng
 	 * Tính toán số tiền đã trả
 	 * Tính toán số tiền còn dư hoặc nợ của khách
 	 * Tính toán số tiền còn lại phải trả
+	 * Tính toán khoản tiền phải trả 1 ngày
 	 * 
 	 * @return void
 	 */
@@ -87,24 +99,60 @@ class AInstallment extends Installment
 	{
 		$this->paidAmount = 0;
 		$this->overBalance = 0;
+		$this->paidPeriods = 0;
 		$paymentByToday = 0; // số tiền phải trả tới hôm nay
-
+		$lastTransaction = 0;
 		if (empty($this->items)) {
 			$installmentItems = new AInstallmentItems();
 			$this->items = $installmentItems->loadTransaction($this->id);
 		}
-		foreach ($this->items as $item) {
+		for ($i = 0; $i < count($this->items); $i++) {
+			$item = $this->items[$i];
 			if (!empty($item->transaction_id)) {
 				$this->paidAmount += $item->transAmount;
+				$this->paidPeriods++;
+				$lastTransaction = $i;
 			}
 			if (strtotime($item->payment_date) <= time()) {
 				$paymentByToday += $item->amount;
 			}
 		}
+
 		// tính toán số tiền còn dư hoặc nợ của khách
 		$this->overBalance = $this->paidAmount - $paymentByToday;
 		// tính toán số tiền còn lại phải trả
 		$this->remainMoney = $this->total_money - $this->paidAmount;
+		// tính toán khoản tiền phải trả 1 ngày
+		$this->amountPerDay = $this->total_money / $this->loan_date;
+		// Tính toán xem có đang nợ họ không
+		if ($this->overBalance < 0 && (abs($this->overBalance) / $this->amountPerDay > 1)) {
+			$this->inDebt = true;
+		}
+		// Tính toán ngày nộp tiền tiếp theo
+		$this->nextPaidDate = isset($this->items[$lastTransaction + 1]) ? $this->items[$lastTransaction + 1]->payment_date : '';
+		// Tính toán số kì chưa nộp tiền
+		$this->remainPeriods = count($this->items) - $this->paidPeriods;
+	}
+
+	/**
+	 * Số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
+	 * @return string,float 
+	 */
+	public function calInDebt($displayFormat = true)
+	{
+		$output = '';
+		if ($this->inDebt) {
+			$output = CHtml::button('Nợ họ', ['class' => 'btn btn-danger btn-md']);
+		}
+		return	$output;
+	}
+	/**
+	 * Số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
+	 * @return string,float 
+	 */
+	public function calAmountPerDay($displayFormat = true)
+	{
+		return	$displayFormat ? Utils::numberFormat($this->amountPerDay) : $this->amountPerDay;
 	}
 
 	/**
@@ -176,19 +224,35 @@ class AInstallment extends Installment
 	 * Transform to display string
 	 * @return string
 	 */
-	public function calEndDate($displayFormat = true)
+	public function calEndDate($displayFormat = true, $fromFormat = 'Y-m-d', $toFormat = 'd/m/Y')
 	{
-		$endDate = date('Y-m-d', strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
-		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $endDate) : $endDate;
+		$endDate = date($fromFormat, strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
+		return	$displayFormat ? Utils::convertDate($fromFormat, $toFormat, $endDate) : $endDate;
 	}
 
 	/**
 	 * Transform to display string
 	 * @return string
 	 */
-	public function calStartDate($displayFormat = true)
+	public function calNextPaidDate($displayFormat = true, $fromFormat = 'Y-m-d', $toFormat = 'd/m/Y')
 	{
-		return	$displayFormat ? Utils::convertDate('Y-m-d', 'd/m/Y', $this->start_date) : $this->start_date;
+		$output = '';
+		if ($this->nextPaidDate == date('Y-m-d')) {
+			$output = CHtml::button('Hôm nay', ['class' => 'btn btn-warning btn-md']);
+		} else if ($this->nextPaidDate == date('Y-m-d', time() + 24 * 60 * 60)) {
+			$output = CHtml::button('Ngày mai', ['class' => 'btn btn-info btn-md']);
+		} else {
+			$output = $displayFormat ? Utils::convertDate($fromFormat, $toFormat, $this->nextPaidDate) : $this->nextPaidDate;
+		}
+		return	$output;
+	}
+	/**
+	 * Transform to display string
+	 * @return string
+	 */
+	public function calStartDate($displayFormat = true, $fromFormat = 'Y-m-d', $toFormat = 'd/m/Y')
+	{
+		return	$displayFormat ? Utils::convertDate($fromFormat, $toFormat, $this->start_date) : $this->start_date;
 	}
 
 
@@ -282,7 +346,7 @@ class AInstallment extends Installment
 		return new CActiveDataProvider($this, array(
 			'criteria' => $criteria,
 			'pagination' => array(
-				'pageSize' => 20,
+				'pageSize' => 50,
 			),
 		));
 	}

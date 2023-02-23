@@ -45,60 +45,121 @@ return false;
 		'template' => '{items}{pager}', // Disable the summary row
 		// 'filter' => $model,
 		'itemsCssClass' => 'table table-bordered table-striped table-hover jambo_table responsive-utilities',
+		'htmlOptions' => array(
+			'style' => 'font-size:12px',
+		),
+
 		'columns' => array(
 			array(
-				'name' => 'id',
+				'header' => 'Mã',
 				'type' => 'raw',
 				'value' => function ($data) {
 					return 'BH-' . $data->id;
 				},
-				'htmlOptions' =>
-				array(
-					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
+				'htmlOptions' => array(
+					'style' => 'width:80px;word-break: break-word;vertical-align:middle;',
 				),
 			),
 			array(
-				'name' => 'customer_name',
+				'header' => 'Tên khách',
 				'type' => 'raw',
-				'htmlOptions' =>
-				array(
-					'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+				'value' => '$data->customer_name',
+				'htmlOptions' => array(
+					'style' => 'width:130px;word-break: break-word;vertical-align:middle;',
 				),
 			),
 			array(
-				'name' => 'receive_money',
+				'header' => 'Tiền đưa khách',
 				'type' => 'raw',
 				'value' => function ($data) {
 					return Utils::numberFormat($data->receive_money);
 				},
-				'htmlOptions' =>
-				array(
-					'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+				'htmlOptions' => array(
+					'style' => 'width:130px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Tỉ lệ',
+				'type' => 'raw',
+				'value' => function ($data) {
+					return $data->calInterestRate();
+				},
+				'htmlOptions' => array(
+					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Thời gian',
+				'type' => 'raw',
+				'value' => function ($data) {
+					return $data->calStartDate(true, 'Y-m-d', 'd/m') . ' -> '
+						. $data->calEndDate(true, 'Y-m-d', 'd/m') . "<br> ({$data->loan_date} ngày)";
+				},
+				'htmlOptions' => array(
+					'style' => 'width:120px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Tiền đã đóng',
+				'type' => 'raw',
+				'value' => function ($data) {
+					$data->calculateAll();
+					return $data->calPaidAmount() . "<br> ({$data->paidPeriods} kỳ)";
+				},
+				'htmlOptions' => array(
+					'style' => 'width:110px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Nợ cũ',
+				'type' => 'raw',
+				'value' => function ($data) {
+					return $data->calOverBalance() < 0 ? $data->calOverBalance() : '';
+				},
+				'htmlOptions' => array(
+					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Tiền 1 ngày',
+				'type' => 'raw',
+				'value' => function ($data) {
+					return $data->calAmountPerDay();
+				},
+				'htmlOptions' => array(
+					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
+				),
+			),
+			array(
+				'header' => 'Còn thiếu',
+				'type' => 'raw',
+				'value' => function ($data) {
+					return $data->calRemainMoney() . "<br> ({$data->remainPeriods} kỳ)";
+				},
+				'htmlOptions' => array(
+					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
 				),
 			),
 
 			array(
-				'name' => 'start_date',
+				'header' => 'Tình trạng',
 				'type' => 'raw',
-				'htmlOptions' =>
-				array(
-					'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+				'value' => function ($data) {
+					return $data->calInDebt();
+				},
+				'htmlOptions' => array(
+					'style' => 'width:60px;word-break: break-word;vertical-align:middle;',
 				),
 			),
+
 			array(
-				'name' => 'create_date',
+				'header' => 'Ngày đóng tiền',
 				'type' => 'raw',
-				'htmlOptions' =>
-				array(
-					'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
-				),
-			),
-			array(
-				'name' => 'status',
-				'type' => 'raw',
-				'htmlOptions' =>
-				array(
-					'style' => 'width:150px;word-break: break-word;vertical-align:middle;',
+				'value' => function ($data) {
+					return $data->calNextPaidDate();
+				},
+				'htmlOptions' => array(
+					'style' => 'width:120px;word-break: break-word;text-align:center;vertical-align:middle;',
 				),
 			),
 
@@ -108,7 +169,7 @@ return false;
 				'value' => function ($data) {
 					return $data->generateColumnButton();
 				},
-				'htmlOptions' => array('style' => 'width:70px;word-break: break-word;vertical-align:middle;'),
+				'htmlOptions' => array('style' => 'width:90px;word-break: break-word;vertical-align:middle;'),
 			),
 
 		),

@@ -145,6 +145,8 @@ class AInstallment extends Installment
 		$output = '';
 		if ($this->inDebt) {
 			$output = CHtml::button('Nợ họ', ['class' => 'btn btn-danger btn-md']);
+		} else {
+			$output = 'Đang vay';
 		}
 		return	$output;
 	}
@@ -379,14 +381,24 @@ class AInstallment extends Installment
 			'payment_date' => null,
 			'amount' => null,
 		];
-
 		// prepare data
 		if ($this->loan_date > 0) {
-			$amount = $this->total_money / $this->loan_date;
-			for ($i = 0; $i < $this->loan_date; $i++) {
+			// Tính số kì phải trả (làm tròn xuống)
+			$numberOfPeriods = floor($this->loan_date / $this->frequency);
+			// Tính số tiền 1 kỳ phải trả
+			$amount = floor($this->total_money / $this->loan_date * $this->frequency);
+
+			for ($i = 0; $i < $numberOfPeriods; $i++) {
 				$dataItem['installment_id'] = $this->id;
 				$dataItem['payment_date'] = date('Y-m-d', strtotime($this->start_date) + $i * $this->frequency * 24 * 60 * 60);
 				$dataItem['amount'] = $amount;
+				$dataInsert[] = $dataItem;
+			}
+			// Tính số tiền thừa phải trả ở kỳ cuối nếu có
+			if ($this->total_money - $amount * $numberOfPeriods > 0) {
+				$dataItem['installment_id'] = $this->id;
+				$dataItem['payment_date'] = date('Y-m-d', strtotime($this->start_date) + $this->loan_date * 24 * 60 * 60);
+				$dataItem['amount'] = $this->total_money - $amount * $numberOfPeriods;
 				$dataInsert[] = $dataItem;
 			}
 		}

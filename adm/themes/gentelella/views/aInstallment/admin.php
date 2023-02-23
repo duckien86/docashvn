@@ -27,15 +27,18 @@ return false;
 
 <!-- table -->
 <div class="row">
-
-	<h4>Hợp đồng vay họ</h4>
+	<div class="space_20"></div>
+	<h4><span class="glyphicon glyphicon-calendar"></span> Hợp đồng vay họ</h4>
 	<?php
 	$modalCreateNewID = 'modal-create-new';
+	$modalUpdateID = 'modal-update-contract';
 	$modalInstallmentPayment = 'modal-installment-payment';
 
 	echo CHtml::button('Tạo mới', ['data-toggle' => 'modal', 'data-target' => "#$modalCreateNewID", 'class' => 'btn btn-primary btn-sm',]);
 	// modal form tạo mới hợp đồng
 	$this->renderPartial('_create_new_modal', ['model' => $model, 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
+	// modal form cập nhật hợp đồng
+	$this->renderPartial('_update_contract_modal', ['model' => $model, 'modalID' => $modalUpdateID, 'shop_id' => $shop_id]);
 	// modal form thanh toán tiền 
 	$this->renderPartial('_payment_modal', ['modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
 	// $this->renderPartial('_payment_modal', ['model' => $model, 'modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
@@ -65,7 +68,9 @@ return false;
 			array(
 				'header' => 'Tên khách',
 				'type' => 'raw',
-				'value' => '$data->customer_name',
+				'value' => function ($data) {
+					return CHtml::link("<b>{$data->customer_name}</b>", '', ['onclick' => "renderUpdateForm({$data->id})"]);
+				},
 				'htmlOptions' => array(
 					'style' => 'width:130px;word-break: break-word;vertical-align:middle;',
 				),
@@ -179,11 +184,11 @@ return false;
 
 	?>
 </div>
-<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/form-function.js"></script>
+<script type="text/javascript" src="<?= Yii::app()->theme->baseUrl ?>/js/form-function.js"></script>
 <!-- PNotify  -->
-<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.core.js"></script>
-<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.buttons.js"></script>
-<script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.nonblock.js"></script>
+<script type="text/javascript" src="<?= Yii::app()->theme->baseUrl ?>/js/notify/pnotify.core.js"></script>
+<script type="text/javascript" src="<?= Yii::app()->theme->baseUrl ?>/js/notify/pnotify.buttons.js"></script>
+<script type="text/javascript" src="<?= Yii::app()->theme->baseUrl ?>/js/notify/pnotify.nonblock.js"></script>
 
 <script>
 	// load lại bảng dữ liệu khi có sự kiện đóng mở form

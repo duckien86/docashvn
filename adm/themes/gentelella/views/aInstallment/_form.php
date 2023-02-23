@@ -6,7 +6,7 @@
 
 <?php $form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 	'id' => 'ainstallment-form',
-	'action' => $this->createUrl('aInstallment/create'),
+	'action' => $action,
 	'enableAjaxValidation' => false,
 	'htmlOptions' => ['class' => 'form-horizontal form-label-left'],
 )); ?>

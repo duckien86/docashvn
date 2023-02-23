@@ -83,10 +83,6 @@ $this->beginWidget(
 						// text: 'Khách hàng +' + data.customer_name,
 						type: 'info'
 					});
-
-					$('#ainstallment-grid').yiiGridView('update', {
-						data: $(this).serialize()
-					});
 				}
 				// Handle the successful response
 			},
@@ -96,12 +92,6 @@ $this->beginWidget(
 			}
 		});
 	}
-	// load lại bảng dữ liệu khi đóng form tạo mới
-	$('#btn-close-modal').on('click', function() {
-		$('#ainstallment-grid').yiiGridView('update', {
-			data: $(this).serialize()
-		});
-	})
 </script>
 
 <style>

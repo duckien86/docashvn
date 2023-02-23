@@ -19,9 +19,11 @@ return false;
 });
 ");
 ?>
-<!-- top tiles -->
-<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
-<!-- /top tiles -->
+<!-- top summary -->
+<div id="top_summary">
+	<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
+</div>
+<!-- /top summary -->
 
 <!-- table -->
 <div class="row">
@@ -182,3 +184,34 @@ return false;
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.core.js"></script>
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.buttons.js"></script>
 <script type="text/javascript" src="/docashvn/adm/themes/gentelella/js/notify/pnotify.nonblock.js"></script>
+
+<script>
+	// load lại bảng dữ liệu khi có sự kiện đóng mở form
+	$('body').on('hidden.bs.modal', '.modal', function() {
+		// load phần summary
+		renderTopSummary('#top_summary');
+		// load lại bảng 
+		$('#ainstallment-grid').yiiGridView('update', {
+			data: $(this).serialize()
+		});
+	});
+
+	// render top summary
+	function renderTopSummary(contentId) {
+		// Submit the form via Ajax
+		$.ajax({
+			url: '<?= $this->createUrl('aInstallment/renderTopSummary') ?>',
+			type: 'POST',
+			data: {
+				'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken ?>'
+			},
+			dataType: 'json',
+			success: function(response) { // Handle the successful response
+				if (response.content != '')
+					$(contentId).html(response.content);
+			},
+			error: function(xhr) { // Handle the error
+			}
+		});
+	}
+</script>

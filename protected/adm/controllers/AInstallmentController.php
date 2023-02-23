@@ -207,18 +207,22 @@ class AInstallmentController extends Controller
                     }
                 }
             }
+        }
 
+        echo CJSON::encode($aryReturn);
+    }
 
-            // if ($installment) {
-            //     $aryReturn['payment_modal_top'] = $this->renderPartial('_payment_modal_top', array(
-            //         'installment' => $installment,
-            //         'modalID' => $modalID,
-            //     ), true);
-            //     $aryReturn['payment_modal_body'] = $this->renderPartial('_payment_modal_body', array(
-            //         'items' => $installment->items,
-            //         'modalID' => $modalID,
-            //     ), true);
-            // }
+    /**
+     * Ajax request
+     * Khởi tạo dữ liệu form thanh toán 
+     */
+    public function actionRenderTopSummary()
+    {
+        $aryReturn = ['content' => false];
+        $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
+
+        if ($shopId) {
+            $aryReturn['content'] = $this->renderPartial('_top_summary', ['model' => new AInstallment(), 'shop_id' => $shopId], true);
         }
 
         echo CJSON::encode($aryReturn);

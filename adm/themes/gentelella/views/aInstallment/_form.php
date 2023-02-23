@@ -78,7 +78,7 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<?php echo $form->textField($model, 'total_money', array(
 			'class' => 'form-control',
-			'onchange' => "formatNumberModalInput('#$modalID','#AInstallment_total_money')",
+			'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_total_money')",
 		)); ?>
 		<?php echo $form->error($model, 'total_money'); ?>
 	</div>
@@ -91,7 +91,7 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<?php echo $form->textField($model, 'receive_money', array(
 			'class' => 'form-control',
-			'onchange' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money')",
+			'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money')",
 		)); ?>
 		<?php echo $form->error($model, 'receive_money'); ?>
 	</div>

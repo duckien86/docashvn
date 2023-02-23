@@ -75,11 +75,12 @@ class AInstallment extends Installment
 			array('frequency, is_before, status', 'numerical', 'integerOnly' => true),
 			array('total_money, receive_money', 'numerical'),
 			array('shop_id, create_by, personal_id, manage_by', 'length', 'max' => 50),
-			array('customer_name', 'length', 'max' => 255),
+			array('customer_name', 'length', 'max' => 50),
 			array('phone_number', 'length', 'max' => 20),
 			array('address, note', 'length', 'max' => 500),
 			array('currentBalance', 'checkEnough', 'message' => 'Tiền quỹ hiện tại không đủ.', 'on' => 'createNew'),
 			array('total_money', 'compare', 'compareAttribute' => 'receive_money', 'operator' => '>='),
+			array('total_money, receive_money,loan_date,frequency', 'compare', 'compareValue' => 0, 'operator' => '>'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, shop_id, create_by, customer_name, phone_number, address, personal_id, total_money, receive_money, loan_date, frequency, is_before, create_date, note, manage_by, status', 'safe', 'on' => 'search'),
@@ -125,11 +126,12 @@ class AInstallment extends Installment
 		// tính toán khoản tiền phải trả 1 ngày
 		$this->amountPerDay = $this->total_money / $this->loan_date;
 		// Tính toán xem có đang nợ họ không
-		if ($this->overBalance < 0 && (abs($this->overBalance) / $this->amountPerDay > 1)) {
+		if ($this->overBalance < 0 && (abs($this->overBalance) / $this->amountPerDay >= 1)) {
 			$this->inDebt = true;
 		}
 		// Tính toán ngày nộp tiền tiếp theo
-		$this->nextPaidDate = isset($this->items[$lastTransaction + 1]) ? $this->items[$lastTransaction + 1]->payment_date : '';
+		$nextTransaction = $lastTransaction > 0 ? $lastTransaction + 1 : $lastTransaction;
+		$this->nextPaidDate = isset($this->items[$nextTransaction]) ? $this->items[$nextTransaction]->payment_date : '';
 		// Tính toán số kì chưa nộp tiền
 		$this->remainPeriods = count($this->items) - $this->paidPeriods;
 	}
@@ -383,7 +385,7 @@ class AInstallment extends Installment
 			$amount = $this->total_money / $this->loan_date;
 			for ($i = 0; $i < $this->loan_date; $i++) {
 				$dataItem['installment_id'] = $this->id;
-				$dataItem['payment_date'] = date('Y-m-d', strtotime($this->start_date) + $i * 24 * 60 * 60);
+				$dataItem['payment_date'] = date('Y-m-d', strtotime($this->start_date) + $i * $this->frequency * 24 * 60 * 60);
 				$dataItem['amount'] = $amount;
 				$dataInsert[] = $dataItem;
 			}

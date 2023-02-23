@@ -24,6 +24,9 @@ $cs->registerCssFile($themePath . '/css/main.css');
  */
 $cs->registerCoreScript('jquery', CClientScript::POS_HEAD);
 
+//global js : all common function
+$cs->registerScriptFile($themePath . '/js/global.js', CClientScript::POS_END);
+
 //bootstrap progress js
 $cs->registerScriptFile($themePath . '/js/progressbar/bootstrap-progressbar.min.js', CClientScript::POS_END);
 $cs->registerScriptFile($themePath . '/js/nicescroll/jquery.nicescroll.min.js', CClientScript::POS_END);

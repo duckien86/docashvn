@@ -8,9 +8,8 @@ function formatNumberModalInput(modal_id, control_id) {
     const modal = $(modal_id);
 
     const amountInput = modal.find(control_id).val();
+    const amount = parseInt(amountInput.replace(/\./g, ''));
 
-    const amount = parseInt(amountInput.replace('/\./g', ''));
-    // // console.log(amount);
     const formattedAmount = amount.toLocaleString('vi-VN');
     // // console.log(formattedAmount);
     modal.find(control_id).val(formattedAmount);

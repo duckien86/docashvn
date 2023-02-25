@@ -20,14 +20,20 @@ return false;
 ");
 ?>
 <!-- top summary -->
-<div id="top_summary">
-	<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
-</div>
+<!-- <div class="x_panel no-padding"> -->
+<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
+<!-- </div> -->
 <!-- /top summary -->
+
+<!-- Search -->
+<!-- <div class="x_panel"> -->
+<?php $this->renderPartial('_search', ['model' => $model]);
+?>
+<!-- </div> -->
+<!-- /Search -->
 
 <!-- table -->
 <div class="row">
-	<div class="space_20"></div>
 	<h4><span class="glyphicon glyphicon-calendar"></span> Hợp đồng vay họ</h4>
 	<?php
 	$modalCreateNewID = 'modal-create-new';

@@ -32,7 +32,7 @@
 
 	<!-- search-form -->
 	<!-- <div class="col-md-12 col-sm-2 col-xs-6 tile"> -->
-	<?php //$this->renderPartial('_search', array(			'model' => $model,		)); 
+	<?php //$this->renderPartial('_search', array('model' => $model,));
 	?>
 	<!-- </div> -->
 	<!-- search-form -->
@@ -43,6 +43,7 @@
 	.row-top {
 		background: #eae7e7;
 		padding: 10px;
+		/* border: 1px solid #E6E9ED; */
 	}
 
 	.count_top {

@@ -3,7 +3,7 @@
 /* @var $model AInstallment */
 /* @var $form CActiveForm */
 ?>
-<div class="row row-top" style="margin-top: 2px;">
+<div class="row row-top" style="margin-top: 2px;padding-bottom:0px">
 
 	<?php $form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 		'action' => Yii::app()->createUrl($this->route),
@@ -62,7 +62,7 @@
 	</div>
 	<div class="form-group col-md-2 col-sm-2 col-xs-12" style="padding-top: 25px;">
 		<div class="col-md-12 col-sm-12 col-xs-12">
-			<?php echo CHtml::button('Tìm kiếm', ['class' => 'btn btn-success btn-sm']) ?>
+			<?php echo CHtml::submitButton('Tìm kiếm', ['class' => 'btn btn-success btn-sm']) ?>
 		</div>
 	</div>
 	<?php $this->endWidget(); ?>

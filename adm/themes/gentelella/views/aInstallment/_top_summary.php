@@ -1,31 +1,31 @@
 <div class="row row-top">
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
-			<span class="count_top"><i class="fa fa-usd"></i> Quỹ tiền mặt</span>
+			<span class="count_top"><i class="fa fa-usd"></i>QUỸ TIỀN MẶT</span>
 			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? ATransactions::sumCurrentBalance($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
-			<span class="count_top"><i class="fa fa-usd"></i> Tiền cho vay</span>
+			<span class="count_top"><i class="fa fa-usd"></i>TIỀN CHO VAY</span>
 			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? AInstallment::loadTotalLending($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count">
 		<div class="right">
-			<span class="count_top"><i class="fa fa-usd"></i>Tiền nợ</span>
+			<span class="count_top"><i class="fa fa-usd"></i>TIỀN NỢ</span>
 			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? AInstallment::loadDebt($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count pull-right">
 		<div class="right">
-			<span class="count_top"><i class="fa fa-usd"></i> Phí lãi đã thu</span>
+			<span class="count_top"><i class="fa fa-usd"></i>PHÍ LÃI ĐÃ THU</span>
 			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? AInstallment::loadPaidInterest($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
 	<div class="animated flipInY col-md-2 col-sm-4 col-xs-4 tile_stats_count pull-right">
 		<div class="right">
-			<span class="count_top"><i class="fa fa-usd"></i> Lãi dự kiến</span>
+			<span class="count_top"><i class="fa fa-usd"></i>LÃI DỰ KIẾN</span>
 			<div class="count-customize"><?= (!Yii::app()->user->super_admin) ? AInstallment::loadExpectedInterest($shop_id, true) : ''; ?></div>
 		</div>
 	</div>
@@ -46,7 +46,7 @@
 	}
 
 	.count_top {
-		font-size: 18px;
+		font-size: 14px;
 	}
 
 	.count-customize {

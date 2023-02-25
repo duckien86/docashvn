@@ -91,7 +91,8 @@
 	<div class="col-md-4 col-sm-4 col-xs-12">
 		<?php echo $form->textField($model, 'receive_money', array(
 			'class' => 'form-control',
-			'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money')",
+			'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money');",
+			// 'onkeydown' => "setPaidPerDay('#$modalID','#AInstallment_total_money','#AInstallment_loan_date','#paid-per-day')",
 		)); ?>
 		<?php echo $form->error($model, 'receive_money'); ?>
 	</div>

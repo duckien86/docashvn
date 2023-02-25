@@ -103,19 +103,20 @@
 		'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
 	)); ?>
 	<div class="col-md-4 col-sm-4 col-xs-12">
-		<?php echo $form->textField($model, 'loan_date', array(
+		<?php echo $form->numberField($model, 'loan_date', array(
 			'class' => 'form-control',
+			'onkeyup' => "setPaidPerDay('#$modalID','#AInstallment_total_money','#AInstallment_loan_date','#paid-per-day')",
 		)); ?>
 		<?php echo $form->error($model, 'loan_date'); ?>
 	</div>
-	<div class="col-md-5">Ngày => ( 0 / 1 ngày )</div>
+	<div class="col-md-5">Ngày => ( <span id="paid-per-day"></span> / 1 ngày )</div>
 </div>
 <div class="form-group">
 	<?php echo $form->labelEx($model, 'frequency', array(
 		'class' => 'control-label col-md-3 col-sm-3 col-xs-12',
 	)); ?>
 	<div class="col-md-4 col-sm-4 col-xs-12">
-		<?php echo $form->textField($model, 'frequency', array(
+		<?php echo $form->numberField($model, 'frequency', array(
 			'class' => 'form-control',
 		)); ?>
 		<?php echo $form->error($model, 'frequency'); ?>

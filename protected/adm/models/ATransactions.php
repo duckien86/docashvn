@@ -168,7 +168,8 @@ class ATransactions extends Transactions
 	}
 
 	/**
-	 * Trả về số tiền đang cho vay của cửa hàng theo loại hình kinh doanh
+	 * Trả về số tiền giao dịch của cửa hàng theo mã chi tiêu (group_id)
+	 * Được tính bằng số tiền bỏ ra
 	 */
 	public static function sumByGroup($shop_id, $group_id, $format = false)
 	{

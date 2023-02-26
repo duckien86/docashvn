@@ -27,14 +27,14 @@ return false;
 
 <!-- Search -->
 <!-- <div class="x_panel"> -->
-<?php $this->renderPartial('_search', ['model' => $model]);
-?>
 <!-- </div> -->
 <!-- /Search -->
 
 <!-- table -->
 <div class="row">
 	<h4><span class="glyphicon glyphicon-calendar"></span> Hợp đồng vay họ</h4>
+	<?php $this->renderPartial('_search', ['model' => $model]);
+	?>
 	<?php
 	$modalCreateNewID = 'modal-create-new';
 	$modalUpdateID = 'modal-update-contract';

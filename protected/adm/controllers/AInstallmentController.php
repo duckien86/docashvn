@@ -115,8 +115,9 @@ class AInstallmentController extends Controller
     {
         $model = new AInstallment('search');
         $model->unsetAttributes(); // clear any default values
-        if (isset($_GET['AInstallment']))
+        if (isset($_GET['AInstallment'])) {
             $model->attributes = $_GET['AInstallment'];
+        }
 
         $this->render('admin', array(
             'model' => $model,

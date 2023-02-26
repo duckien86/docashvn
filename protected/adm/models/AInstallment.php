@@ -54,6 +54,13 @@ class AInstallment extends Installment
 	 */
 	public $transHistory;
 
+	// Thuộc tính form search
+	public $search_customer_name;
+	public $search_loan_date;
+	public $search_start_date;
+	public $search_end_date;
+	public $search_status;
+
 	// Cấu hình nhóm giao dịch : Yii::app()->params['trans_group_id']
 	const TRANS_GRP_CREATE = 'bh_create';
 	const TRANS_GRP_PAID = 'bh_paid';
@@ -319,6 +326,12 @@ class AInstallment extends Installment
 			'note' => 'Ghi chú',
 			'manage_by' => 'NV thu tiền',
 			'status' => 'Trạng thái',
+			'search_customer_name' => 'Tên khách hàng',
+			'search_loan_date' => 'Thời gian vay',
+			'search_start_date' => 'Từ ngày',
+			'search_end_date' => 'Đến ngày',
+			'search_status' => 'Trạng thái',
+
 		);
 	}
 
@@ -537,8 +550,14 @@ class AInstallment extends Installment
 	 */
 	public static function loadTotalLending($shop_id, $format = false)
 	{
-		$balance = abs(ATransactions::sumByGroup($shop_id, AInstallment::TRANS_GRP_CREATE));
-		return ($format) ? Utils::numberFormat($balance) : $balance;
+		// $balance = abs(ATransactions::sumByGroup($shop_id, AInstallment::TRANS_GRP_CREATE));
+		// return ($format) ? Utils::numberFormat($balance) : $balance;
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(total_money)')
+			->from('tbl_installment')
+			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
+			->queryScalar();
+		return ($format) ? Utils::numberFormat($total) : $total;
 	}
 
 	/**

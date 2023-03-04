@@ -89,12 +89,31 @@ class AInstallment extends Installment
 			array('total_money', 'compare', 'compareAttribute' => 'receive_money', 'operator' => '>='),
 			array('total_money, receive_money,loan_date,frequency', 'compare', 'compareValue' => 0, 'operator' => '>'),
 			array('frequency', 'compare', 'compareAttribute' => 'loan_date', 'operator' => '<'),
+
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, shop_id, create_by, customer_name, phone_number, address, personal_id, total_money, receive_money, loan_date, frequency, is_before, create_date, note, manage_by, status', 'safe', 'on' => 'search'),
 		);
 	}
 
+	/**
+	 * Set default value by scenario
+	 */
+	public function setDefaultValue()
+	{
+		switch ($this->scenario) {
+			case 'createNew':
+				$this->loan_date = 50;
+				$this->frequency = 1;
+				$this->start_date = date('d/m/Y');
+				// case 'update':
+				// 	return array(
+				// 		'status' => 'active',
+				// 	);
+			default:
+				return array();
+		}
+	}
 	/**
 	 * Tính toáng tất cả thông số liên quan đến 1 hợp đồng
 	 * Tính toán số tiền đã trả
@@ -279,6 +298,13 @@ class AInstallment extends Installment
 		} else {
 			return false;
 		}
+	}
+
+	public function afterConstruct()
+	{
+		parent::afterConstruct();
+		$this->setDefaultValue();
+		// your code here
 	}
 
 	/**

@@ -42,7 +42,7 @@ return false;
 
 	echo CHtml::button('Tạo mới', ['data-toggle' => 'modal', 'data-target' => "#$modalCreateNewID", 'class' => 'btn btn-primary btn-sm',]);
 	// modal form tạo mới hợp đồng
-	$this->renderPartial('_create_new_modal', ['model' => $model, 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
+	$this->renderPartial('_create_new_modal', ['model' => new AInstallment('createNew'), 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
 	// modal form cập nhật hợp đồng
 	$this->renderPartial('_update_contract_modal', ['model' => $model, 'modalID' => $modalUpdateID, 'shop_id' => $shop_id]);
 	// modal form thanh toán tiền 

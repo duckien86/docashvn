@@ -102,14 +102,10 @@ class AInstallment extends Installment
 	public function setDefaultValue()
 	{
 		switch ($this->scenario) {
-			case 'createNew':
+			case 'createNew': // set default value
 				$this->loan_date = 50;
 				$this->frequency = 1;
 				$this->start_date = date('d/m/Y');
-				// case 'update':
-				// 	return array(
-				// 		'status' => 'active',
-				// 	);
 			default:
 				return array();
 		}

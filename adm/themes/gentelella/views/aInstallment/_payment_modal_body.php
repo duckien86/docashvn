@@ -34,7 +34,12 @@
 			</div>
 			<!-- Đóng hợp đồng -->
 			<div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
-				<p>đang cập nhật</p>
+				<?php
+				echo $this->renderPartial('_payment_modal_body_tab2', array(
+					'installment' => $installment,
+					'modalID' => $modalID,
+				));
+				?>
 			</div>
 			<!-- Nợ -->
 			<div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">

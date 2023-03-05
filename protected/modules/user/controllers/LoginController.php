@@ -20,12 +20,13 @@ class LoginController extends Controller
 					$user = AUsers::model()->findByAttributes(array('username' => $model->username));
 					Yii::app()->user->setState('shop_id', $user->shop_id);
 					Yii::app()->user->setState('super_admin', $user->superuser);
-
 					$this->lastViset();
-					if (strpos(Yii::app()->user->returnUrl, '/index.php') !== false)
-						$this->redirect(Yii::app()->controller->module->returnUrl);
-					else
-						$this->redirect(Yii::app()->user->returnUrl);
+					$this->redirect(Yii::app()->defaultController);
+
+					// if (strpos(Yii::app()->user->returnUrl, '/index.php') !== false)
+					// $this->redirect(Yii::app()->controller->module->returnUrl);
+					// else
+					// 	$this->redirect(Yii::app()->user->returnUrl);
 				}
 			}
 

@@ -171,14 +171,17 @@ class ATransactions extends Transactions
 	 * Trả về số tiền giao dịch của cửa hàng theo mã chi tiêu (group_id)
 	 * Được tính bằng số tiền bỏ ra
 	 */
-	public static function sumByGroup($shop_id, $group_id, $format = false)
+	public static function sumByGroup($shop_id, $group_id, $from_date = false, $to_date = false, $format = false)
 	{
 		$command = Yii::app()->db->createCommand();
-		$balance = $command->select('sum(amount)')
+		$command->select('sum(amount)')
 			->from('tbl_transactions')
 			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
-			->andWhere("group_id=:group_id", [':group_id' => $group_id])
-			->queryScalar();
+			->andWhere("group_id=:group_id", [':group_id' => $group_id]);
+		if ($from_date && $to_date && $from_date < $to_date) {
+			$command->andWhere("create_date > :from_date and create_date < :to_date", [':from_date' => $from_date, ':to_date' => $to_date]);
+		}
+		$balance = $command->queryScalar();
 		return ($format) ? Utils::numberFormat($balance) : $balance;
 	}
 

@@ -20,9 +20,9 @@ return false;
 ");
 ?>
 <!-- top summary -->
-<!-- <div class="x_panel no-padding"> -->
-<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
-<!-- </div> -->
+<div id="top_summary">
+	<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
+</div>
 <!-- /top summary -->
 
 <!-- Search -->

@@ -196,15 +196,15 @@ class AInstallmentController extends Controller
         $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
 
         if ($installment_id && $item_id) {
-
             // Khai báo modal id
             $modalID = 'modal-installment-payment';
 
             $installment = AInstallment::loadContract($installment_id, $shopId, true, false);
             foreach ($installment->items as $item) {
                 if ($item->id == $item_id) {
-                    if ($item->doPayment($installment)) {
+                    if ($numOfItems = $item->doPayment($installment)) {
                         $aryReturn['ok'] = true;
+                        $aryReturn['row_affected'] = $numOfItems;
                     }
                 }
             }

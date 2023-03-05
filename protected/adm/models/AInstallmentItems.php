@@ -139,10 +139,37 @@ class AInstallmentItems extends InstallmentItems
 	}
 
 	/**
-	 * Thực hiện giao dịch 
+	 * Thực hiện giao dịch đóng tiền hoặc hủy đóng tiền
 	 * nộp tiền bát họ || hủy nộp tiền
+	 * @return int - số lượng bản ghi đã thực hiện
 	 */
 	public function doPayment($installment, $amountOther = false)
+	{
+		$totalItems = count($installment->items);
+		$countItems = 0;
+		if (empty($this->transaction_id)) { // Muốn thực hiện nộp tiền
+			for ($i = 0; $i < $totalItems; $i++) {
+				$item = $installment->items[$i];
+
+				if ($item->addPayment($installment)) $countItems++;
+
+				if ($this->id == $item->id)
+					return $countItems;
+			}
+		} else { // Muốn hủy giao dịch
+			for ($i = $totalItems - 1; $i >= 0; $i--) {
+				$item = $installment->items[$i];
+				if ($item->cancelPayment($installment)) $countItems++;
+				if ($this->id == $item->id)
+					return $countItems;
+			}
+		}
+	}
+
+	/**
+	 * Thực hiện giao dịch nộp tiền
+	 */
+	public function addPayment($installment, $amountOther = false)
 	{
 		$transaction = new ATransactions;
 		$createBy = $installment->create_by;
@@ -159,7 +186,23 @@ class AInstallmentItems extends InstallmentItems
 				$this->transaction_id = $transaction->id;
 				return $this->save();
 			}
-		} else {
+		}
+		return false;
+	}
+
+	/**
+	 * Hủy giao dịch nộp tiền
+	 */
+	public function cancelPayment($installment)
+	{
+		$transaction = new ATransactions;
+		$createBy = $installment->create_by;
+		$shopId = $installment->shop_id;
+		$customerName = $installment->customer_name;
+		$amount =  $this->amount;
+		$ref_id = $installment->id;
+
+		if (!empty($this->transaction_id)) {
 			$transGroupId = AInstallment::TRANS_GRP_PAID_CANCEL;
 			$note = Yii::app()->params['trans_group_id'][AInstallment::TRANS_GRP_PAID_CANCEL];
 
@@ -170,7 +213,5 @@ class AInstallmentItems extends InstallmentItems
 				}
 			}
 		}
-
-		return false;
 	}
 }

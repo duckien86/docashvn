@@ -61,7 +61,7 @@
 				if (response.ok == true) { // Có dữ liệu
 					initPaymentForm(installment_id);
 					new PNotify({
-						title: 'Nộp tiền thành công!',
+						title: 'Nộp tiền thành công! ' + response.rowAffected,
 						// text: 'text in body',
 						type: 'info'
 					});

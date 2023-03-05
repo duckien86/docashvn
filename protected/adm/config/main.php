@@ -17,7 +17,7 @@ $admArray = array(
     'controllerPath'    => $adm . '/controllers',
     'viewPath'          => $root . '/adm/themes/gentelella/views',
     'runtimePath'       => $adm . '/runtime',
-    'defaultController' => 'ASite',
+    'defaultController' => 'AInstallment',
     // autoloading model and component classes
     'import'            => array(
         'adm.models.*',

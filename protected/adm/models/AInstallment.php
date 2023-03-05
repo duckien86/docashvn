@@ -141,7 +141,7 @@ class AInstallment extends Installment
 				$this->paidPeriods++;
 				$lastTransaction = $i;
 			}
-			if (strtotime($item->payment_date) <= time()) {
+			if (strtotime($item->payment_date) <= strtotime(date('Y/m/d'))) {
 				$paymentByToday += $item->amount;
 			}
 		}
@@ -572,17 +572,27 @@ class AInstallment extends Installment
 	}
 
 	/**
-	 * Tổng số tiền đang cho vay
+	 * Tổng số tiền đã cho vay chưa bao gồm tiền thu về
 	 */
-	public static function loadTotalLending($shop_id, $format = false)
+	public static function loadTotalLendingGross($shop_id, $from_date = false, $to_date = false, $format = false)
 	{
 		// $balance = abs(ATransactions::sumByGroup($shop_id, AInstallment::TRANS_GRP_CREATE));
 		// return ($format) ? Utils::numberFormat($balance) : $balance;
 		$command = Yii::app()->db->createCommand();
-		$total = $command->select('sum(total_money)')
+		$command->select('SUM(total_money)')
 			->from('tbl_installment')
-			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
-			->queryScalar();
+			->where("shop_id =:shop_id", [':shop_id' => $shop_id]);
+		if ($from_date && $to_date && $from_date < $to_date) {
+			$command->andWhere(
+				"create_date > :from_date AND create_date < :to_date",
+				[
+					':from_date' => $from_date,
+					':to_date' => $to_date
+				]
+			);
+		}
+
+		$total = $command->queryScalar();
 		return ($format) ? Utils::numberFormat($total) : $total;
 	}
 
@@ -611,6 +621,7 @@ class AInstallment extends Installment
 			->join('tbl_installment t3', 't3.id = t.installment_id')
 			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
 			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
+			->andWhere("t.payment_date <= :payment_date", [':payment_date' => date('Y/m/d')])
 			->queryScalar();
 
 		return ($format) ? Utils::numberFormat($total) : $total;
@@ -628,7 +639,7 @@ class AInstallment extends Installment
 			->join('tbl_installment t3', 't3.id = t.installment_id')
 			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
 			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
-			->andWhere("t.payment_date <= NOW()")
+			->andWhere("t.payment_date < :payment_date", [':payment_date' => date('Y/m/d')])
 			// ->getText();
 			->queryScalar();
 

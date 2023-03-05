@@ -511,7 +511,7 @@ class AInstallment extends Installment
 	/**
 	 * Đóng hợp đồng
 	 */
-	public function closeContract(&$errors)
+	public static function closeContract(&$errors)
 	{
 		# code...
 	}

@@ -152,6 +152,36 @@ class AInstallmentController extends Controller
         echo CJSON::encode($response);
         Yii::app()->end();
     }
+    /**
+     * Ajax request
+     * Khởi tạo dữ liệu form thanh toán 
+     */
+    public function actionDoCloseContract()
+    {
+        $aryReturn = ['ok' => false, 'row_affected' => 0, 'errMsg' => ''];
+        $installment_id = Yii::app()->request->getParam('installment_id', false);
+        $extra_money = Yii::app()->request->getParam('extra_money', false);
+        $shop_id =  Yii::app()->user->shop_id;
+
+        if ($installment_id && $shop_id) {
+            // Khai báo modal id
+            $modalID = 'modal-installment-payment';
+
+            $installment = AInstallment::loadContract($installment_id, $shop_id, true, false);
+            // foreach ($installment->items as $item) {
+            //     if ($item->id == $item_id) {
+            //         if ($numOfItems = $item->doPayment($installment)) {
+            //             $aryReturn['ok'] = true;
+            //             $aryReturn['row_affected'] = $numOfItems;
+            //         }
+            //     }
+            // }
+        } else {
+            $aryReturn['errMsg'] = "Invalid params ints:$installment_id|item:$item_id|shop:$shop_id";
+        }
+
+        echo CJSON::encode($aryReturn);
+    }
 
     /**
      * Ajax request
@@ -191,16 +221,16 @@ class AInstallmentController extends Controller
      */
     public function actionDoPayment()
     {
-        $aryReturn = ['ok' => false];
+        $aryReturn = ['ok' => false, 'row_affected' => 0, 'errMsg' => ''];
         $installment_id = Yii::app()->request->getParam('installment_id', false);
         $item_id = Yii::app()->request->getParam('item_id', false);
-        $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
+        $shop_id =  Yii::app()->user->shop_id;
 
-        if ($installment_id && $item_id) {
+        if ($installment_id && $item_id && $shop_id) {
             // Khai báo modal id
             $modalID = 'modal-installment-payment';
 
-            $installment = AInstallment::loadContract($installment_id, $shopId, true, false);
+            $installment = AInstallment::loadContract($installment_id, $shop_id, true, false);
             foreach ($installment->items as $item) {
                 if ($item->id == $item_id) {
                     if ($numOfItems = $item->doPayment($installment)) {
@@ -209,10 +239,13 @@ class AInstallmentController extends Controller
                     }
                 }
             }
+        } else {
+            $aryReturn['errMsg'] = "Invalid params ints:$installment_id|item:$item_id|shop:$shop_id";
         }
 
         echo CJSON::encode($aryReturn);
     }
+
 
     /**
      * Ajax request

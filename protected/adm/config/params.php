@@ -17,6 +17,7 @@ return array(
         // bát họ
         'bh_create' => 'Tạo mới hợp đồng',
         'bh_paid' => 'Đóng tiền họ',
+        'bh_extra_paid' => 'Đóng HĐ (Tiền khác)',
         'bh_paid_cancel' => 'Hủy đóng tiền họ',
         // cầm đồ
         'cd_create' => 'Cầm đồ',

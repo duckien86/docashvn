@@ -98,7 +98,7 @@ return false;
 					return $data->calInterestRate();
 				},
 				'htmlOptions' => array(
-					'style' => 'width:100px;word-break: break-word;vertical-align:middle;',
+					'style' => 'width:80px;word-break: break-word;vertical-align:middle;',
 				),
 			),
 			array(
@@ -158,10 +158,10 @@ return false;
 				'header' => 'Tình trạng',
 				'type' => 'raw',
 				'value' => function ($data) {
-					return $data->calInDebt();
+					return $data->calStatus();
 				},
 				'htmlOptions' => array(
-					'style' => 'width:60px;word-break: break-word;vertical-align:middle;',
+					'style' => 'width:90px;word-break: break-word;vertical-align:middle;',
 				),
 			),
 

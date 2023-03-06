@@ -64,11 +64,26 @@ class AInstallment extends Installment
 	// Cấu hình nhóm giao dịch : Yii::app()->params['trans_group_id']
 	const TRANS_GRP_CREATE = 'bh_create';
 	const TRANS_GRP_PAID = 'bh_paid';
+	const TRANS_GRP_EXTRA_PAID = 'bh_extra_paid';
 	const TRANS_GRP_PAID_CANCEL = 'bh_paid_cancel';
 
 	// Cấu hình trạng thái hợp đồng
+	/**
+	 * Trạng thái HĐ đã xóa
+	 */
+	const STATUS_DELETE = -1;
+	/**
+	 * Trạng thái hợp đồng đang vay
+	 */
 	const STATUS_OPEN = 1;
-	const STATUS_CLOSE = 0;
+	/**
+	 * Trạn thái HĐ nợ xấu
+	 */
+	const STATUS_BAD_DEBT = 2;
+	/**
+	 * Trạng thái HĐ hoàn thành
+	 */
+	const STATUS_FINISH = 10;
 
 	/**
 	 * @return array validation rules for model attributes.
@@ -160,8 +175,8 @@ class AInstallment extends Installment
 	}
 
 	/**
-	 * Số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
-	 * @return string,float 
+	 * Có đang trong tình trạng nợ hay không
+	 * @return String
 	 */
 	public function calInDebt($displayFormat = true)
 	{
@@ -170,6 +185,28 @@ class AInstallment extends Installment
 			$output = CHtml::button('Nợ họ', ['class' => 'btn btn-danger btn-md']);
 		} else {
 			$output = 'Đang vay';
+		}
+		return	$output;
+	}
+
+	public function calStatus($displayFormat = true)
+	{
+		$output = '';
+		switch ($this->status) {
+			case self::STATUS_OPEN:
+				if ($this->inDebt) {
+					$output = CHtml::button('Nợ họ', ['class' => 'btn btn-danger btn-md']);
+				} else {
+					$output = 'Đang vay';
+				}
+				break;
+			case self::STATUS_FINISH:
+				$output = 'Hoàn thành';
+				break;
+
+			default:
+				# code...
+				break;
 		}
 		return	$output;
 	}
@@ -286,10 +323,17 @@ class AInstallment extends Installment
 	public function beforeValidate()
 	{
 		if (parent::beforeValidate()) {
-			$this->total_money = str_replace('.', '', $this->total_money);
-			$this->receive_money = str_replace('.', '', $this->receive_money);
-			$this->start_date =  Utils::convertDate('d/m/Y', 'Y-m-d', $this->start_date);
+			switch ($this->scenario) {
+				case 'createNew':
+					$this->total_money = str_replace('.', '', $this->total_money);
+					$this->receive_money = str_replace('.', '', $this->receive_money);
+					$this->start_date =  Utils::convertDate('d/m/Y', 'Y-m-d', $this->start_date);
+					break;
 
+				default:
+					# code...
+					break;
+			}
 			return true;
 		} else {
 			return false;
@@ -452,20 +496,35 @@ class AInstallment extends Installment
 	 */
 	public function generateColumnButton()
 	{
-		$installmentPayment = CHtml::link('<i class="glyphicon glyphicon-usd"></i>', '#', [
-			'data-original-title' => "Nộp tiền",
-			'data-toggle' => "modal",
-			'data-target' => "#modal-installment-payment",
-			'class' => 'btn btn-warning btn-xs',
-			'onclick' => "initPaymentForm($this->id);"
-		]);
-		$closeContract = CHtml::link('<i class="glyphicon glyphicon-arrow-down"></i>', '#', [
-			'data-original-title' => "Đóng hợp đồng",
-			'data-toggle' => "tooltip",
-			'class' => 'btn btn-danger btn-xs',
-			'onclick' => "closeContract($this->id);"
-		]);
-		return $installmentPayment . $closeContract;
+		$htmlOuput = '';
+		if ($this->status == self::STATUS_FINISH) {
+			$reOpenContract = CHtml::link('<i class="glyphicon glyphicon-share"></i>', '#', [
+				'data-original-title' => "Mở lại hợp đồng",
+				'data-toggle' => "Mở lại hợp đồng",
+				// 'data-toggle' => "modal",
+				// 'data-target' => "#modal-installment-payment",
+				'class' => 'btn btn-danger btn-xs',
+				'onclick' => "reopen_contract($this->id);"
+			]);
+			$htmlOuput = $reOpenContract;
+		} else {
+			$installmentPayment = CHtml::link('<i class="glyphicon glyphicon-usd"></i>', '#', [
+				'data-original-title' => "Nộp tiền",
+				'data-toggle' => "modal",
+				'data-target' => "#modal-installment-payment",
+				'class' => 'btn btn-warning btn-xs',
+				'onclick' => "initPaymentForm($this->id);"
+			]);
+			$closeContract = CHtml::link('<i class="glyphicon glyphicon-check"></i>', '#', [
+				'data-original-title' => "Đóng hợp đồng",
+				'data-toggle' => "modal",
+				'data-target' => "#modal-installment-payment",
+				'class' => 'btn btn-info btn-xs',
+				'onclick' => "initPaymentForm($this->id);"
+			]);
+			$htmlOuput = $installmentPayment . $closeContract;
+		}
+		return $htmlOuput;
 	}
 
 	/**
@@ -508,12 +567,77 @@ class AInstallment extends Installment
 		return true;
 	}
 
+
 	/**
-	 * Đóng hợp đồng
+	 * Thực hiện tất toán các ngày nộp tiền mà chưa có giao dịch
+	 *
+	 * @param  mixed $extraMoney - Tiền điều chỉnh khi thực hiện tất toán hợp đồng
+	 * @return int - số lượng bản ghi đã thực hiện
 	 */
-	public static function closeContract(&$errors)
+	public function closeContract($extraMoney = 0)
 	{
-		# code...
+		$transaction = Yii::app()->db->beginTransaction();
+
+		try {
+			// Thực hiện đóng tiền các ngày mà chưa thanh toán.
+			$totalItems = count($this->items);
+			$countAffectedItems = 0;
+			for ($i = 0; $i < $totalItems; $i++) {
+				$item = $this->items[$i];
+				if (empty($item->trans_id)) {
+					if ($item->addPayment($this)) $countAffectedItems++;
+				}
+			}
+			if ($extraMoney != 0) { // nếu có tiền điều chỉnh tăng hoặc giảm
+				$this->extraPaid($extraMoney);
+			}
+
+			// Cập nhật trạng thái hợp đồng
+			$this->status = AInstallment::STATUS_FINISH;
+			$this->save();
+
+			// Commit the transaction if all operations succeed
+			$transaction->commit();
+			return true;
+		} catch (CException $e) {
+			// Roll back the transaction if an error occurs
+			$transaction->rollback();
+			Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
+		}
+		return false;
+	}
+
+	/**
+	 * Thực hiện giao dịch nộp tiền bổ sung
+	 *
+	 * @param  mixed $installment
+	 * @param  mixed $transNote
+	 * @param  mixed $amountOther
+	 * @return boolean
+	 */
+	public function extraPaid($amountOther = 0, $transNote = '')
+	{
+		if ($amountOther == 0) return true;
+
+		$transaction = new ATransactions;
+		$createBy = $this->create_by;
+		$shopId = $this->shop_id;
+		$customerName = $this->customer_name;
+		$amount = $amountOther;
+		$refId = $this->id;
+
+		$transGroupId = AInstallment::TRANS_GRP_EXTRA_PAID;
+		$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][$transGroupId] : $transNote;
+		if ($amount > 0) {
+			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId)) {
+				return true;
+			}
+		} else {
+			if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -545,9 +669,9 @@ class AInstallment extends Installment
 			$installment->loadTransHistory();
 			if ($calculateAll)
 				$installment->calculateAll();
+			return $installment;
 		}
-
-		return $installment;
+		return false;
 	}
 
 	/**
@@ -577,7 +701,8 @@ class AInstallment extends Installment
 		$command = Yii::app()->db->createCommand();
 		$command->select('SUM(total_money)')
 			->from('tbl_installment')
-			->where("shop_id =:shop_id", [':shop_id' => $shop_id]);
+			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("status <>:status", [':status' => AInstallment::STATUS_FINISH]);
 		if ($from_date && $to_date && $from_date < $to_date) {
 			$command->andWhere(
 				"create_date > :from_date AND create_date < :to_date",
@@ -601,6 +726,7 @@ class AInstallment extends Installment
 		$total = $command->select('sum(total_money - receive_money)')
 			->from('tbl_installment')
 			->where("shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("status <>:status", [':status' => AInstallment::STATUS_FINISH])
 			->queryScalar();
 		return ($format) ? Utils::numberFormat($total) : $total;
 	}

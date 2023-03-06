@@ -45,7 +45,10 @@ if ($installment->overBalance > 0) {
 		]) ?>
 	</div>
 	<div class="col-md-12 col-sm-12 col-xs-12 text-center">
-		<?= CHtml::button('Đóng HĐ (tiền khác)', ['class' => 'btn btn-primary', 'onclick' => "closeContract({$installment->id},true)"]) ?>
+		<div class="col-md-6 title-left"></div>
+		<div class="col-md-6 title-right">
+			<?= CHtml::button('Đóng HĐ (tiền khác)', ['class' => 'btn btn-primary', 'onclick' => "closeContract({$installment->id},true)"]) ?>
+		</div>
 	</div>
 </div>
 <!-- Ghi chú đóng hợp đồng -->
@@ -82,10 +85,10 @@ if ($installment->overBalance > 0) {
 <script>
 	function calTotalPaid(modal_id) {
 		const modal = $(modal_id);
-		let remain_money = (modal.find('#remain-money').val().replace(/\./g, ''));
-		let extra_money = (modal.find('#extra-money').val().replace(/\./g, ''));
-		let old_debt = (modal.find('#old-debt').val().replace(/\./g, ''));
-		let total_paid = formatCurrency(remain_money - old_debt - extra_money)
+		let remain_money = parseInt(modal.find('#remain-money').val().replace(/\./g, ''));
+		let extra_money = parseInt(modal.find('#extra-money').val().replace(/\./g, ''));
+		let old_debt = parseInt(modal.find('#old-debt').val().replace(/\./g, ''));
+		let total_paid = formatCurrency((remain_money - old_debt) + extra_money)
 		modal.find('#total-paid').val(total_paid);
 	}
 
@@ -98,8 +101,9 @@ if ($installment->overBalance > 0) {
 		var current_modal_id = '#<?= $modalID ?>';
 		var extra_money = 0;
 		const current_modal = $(current_modal_id);
+
 		if (is_extra_money == true) {
-			extra_money = $('#extra_money').val();
+			extra_money = current_modal.find('#extra-money').val().replace(/\./g, '');
 		}
 		$.ajax({
 			url: '<?= $this->createUrl('aInstallment/doCloseContract') ?>',

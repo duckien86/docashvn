@@ -42,23 +42,10 @@ $this->beginWidget(
 <!-- // end modal -->
 
 <script>
-	// $(document).ready(function() {
-	// 	/**
-	// 	 * Thực hiện xử lý thanh toán khoản vay
-	// 	 */
-	// 	var modal_id = '#<?= $modalID ?>';
-
-	// 	$(modal_id).on('shown.bs.modal', function() { // Xử lý dựa theo sự kiện khởi tạo form
-
-	// 	});
-	// });
-
 	// Khởi tạo form thanh toán
 	function initPaymentForm(id) {
 
-		var current_modal_id = '#<?= $modalID ?>';
-		const current_modal = $(current_modal_id);
-
+		const current_modal = $('#<?= $modalID ?>');
 		$.ajax({
 			url: '<?= $this->createUrl('aInstallment/initPaymentForm') ?>',
 			type: 'POST',

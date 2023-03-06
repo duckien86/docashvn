@@ -160,24 +160,26 @@ class AInstallmentController extends Controller
     {
         $aryReturn = ['ok' => false, 'row_affected' => 0, 'errMsg' => ''];
         $installment_id = Yii::app()->request->getParam('installment_id', false);
-        $extra_money = Yii::app()->request->getParam('extra_money', false);
         $shop_id =  Yii::app()->user->shop_id;
+        $extra_money = Yii::app()->request->getParam('extra_money', 0);
 
         if ($installment_id && $shop_id) {
             // Khai báo modal id
             $modalID = 'modal-installment-payment';
 
             $installment = AInstallment::loadContract($installment_id, $shop_id, true, false);
-            // foreach ($installment->items as $item) {
-            //     if ($item->id == $item_id) {
-            //         if ($numOfItems = $item->doPayment($installment)) {
-            //             $aryReturn['ok'] = true;
-            //             $aryReturn['row_affected'] = $numOfItems;
-            //         }
-            //     }
-            // }
+            if ($installment && $installment->status != $installment::STATUS_FINISH) {
+                if ($installment->closeContract($extra_money)) {
+                    $aryReturn['ok'] = true;
+                    $aryReturn['errMsg'] = "Đã đóng hợp đồng Mã:{$installment->id}- Khách({$installment->customer_name})";
+                } else {
+                    $aryReturn['errMsg'] = "Có lỗi xảy ra ints:$installment_id|shop:$shop_id";
+                }
+            } else {
+                $aryReturn['errMsg'] = "Không tìm thấy HĐ hoặc đã đóng ints:$installment_id|shop:$shop_id";
+            }
         } else {
-            $aryReturn['errMsg'] = "Invalid params ints:$installment_id|item:$item_id|shop:$shop_id";
+            $aryReturn['errMsg'] = "Sai dữ liệu đầu vào ints:$installment_id|shop:$shop_id";
         }
 
         echo CJSON::encode($aryReturn);
@@ -232,7 +234,7 @@ class AInstallmentController extends Controller
 
             $installment = AInstallment::loadContract($installment_id, $shop_id, true, false);
             foreach ($installment->items as $item) {
-                if ($item->id == $item_id) {
+                if ($item->id == $item_id) { // tìm tới ngày muốn đóng tiền
                     if ($numOfItems = $item->doPayment($installment)) {
                         $aryReturn['ok'] = true;
                         $aryReturn['row_affected'] = $numOfItems;

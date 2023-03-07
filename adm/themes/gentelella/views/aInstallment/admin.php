@@ -18,12 +18,39 @@ data: $(this).serialize()
 return false;
 });
 ");
+
+$modalCreateNewID = 'modal-create-new';
+$modalUpdateID = 'modal-update-contract';
+$modalInstallmentPayment = 'modal-installment-payment';
+
 ?>
 <!-- top summary -->
 <div id="top_summary">
 	<?php $this->renderPartial('_top_summary', ['model' => $model, 'shop_id' => $shop_id]); ?>
 </div>
-<!-- /top summary -->
+<!-- create-contract -->
+<div id="create-contract">
+	<?php
+	// modal form tạo mới hợp đồng
+	$this->renderPartial('_create_new_modal', ['model' => new AInstallment('createNew'), 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
+	?>
+</div>
+
+<!-- update-contract -->
+<div id="update-contract">
+	<?php
+	// modal form cập nhật hợp đồng
+	$this->renderPartial('_update_contract_modal', ['model' => $model, 'modalID' => $modalUpdateID, 'shop_id' => $shop_id]);
+	?>
+</div>
+
+<!-- payment-modal -->
+<div id="payment-modal">
+	<?php
+	// modal form thanh toán tiền 
+	$this->renderPartial('_payment_modal', ['modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
+	?>
+</div>
 
 <!-- Search -->
 <!-- <div class="x_panel"> -->
@@ -36,18 +63,8 @@ return false;
 	<?php $this->renderPartial('_search', ['model' => $model]);
 	?>
 	<?php
-	$modalCreateNewID = 'modal-create-new';
-	$modalUpdateID = 'modal-update-contract';
-	$modalInstallmentPayment = 'modal-installment-payment';
 
 	echo CHtml::button('Tạo mới', ['data-toggle' => 'modal', 'data-target' => "#$modalCreateNewID", 'class' => 'btn btn-primary btn-sm',]);
-	// modal form tạo mới hợp đồng
-	$this->renderPartial('_create_new_modal', ['model' => new AInstallment('createNew'), 'modalID' => $modalCreateNewID, 'shop_id' => $shop_id]);
-	// modal form cập nhật hợp đồng
-	$this->renderPartial('_update_contract_modal', ['model' => $model, 'modalID' => $modalUpdateID, 'shop_id' => $shop_id]);
-	// modal form thanh toán tiền 
-	$this->renderPartial('_payment_modal', ['modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
-	// $this->renderPartial('_payment_modal', ['model' => $model, 'modalID' => $modalInstallmentPayment, 'shop_id' => $shop_id]);
 
 	// bảng danh sách
 	$this->widget('booster.widgets.TbGridView', array(
@@ -75,7 +92,11 @@ return false;
 				'header' => 'Tên khách',
 				'type' => 'raw',
 				'value' => function ($data) {
-					return CHtml::link("<b>{$data->customer_name}</b>", '', ['onclick' => "renderUpdateForm({$data->id})"]);
+					return CHtml::link("<b>{$data->customer_name}</b>", '', [
+						'onclick' => "renderUpdateForm({$data->id})",
+						'data-toggle' => "modal",
+						'data-target' => "#modal-update-contract",
+					]);
 				},
 				'htmlOptions' => array(
 					'style' => 'width:130px;word-break: break-word;vertical-align:middle;',
@@ -224,5 +245,31 @@ return false;
 			error: function(xhr) { // Handle the error
 			}
 		});
+	}
+
+	function renderUpdateForm(installment_id) {
+		let modal_id = '#<?= $modalUpdateID ?>';
+		let modal_update = $(modal_id);
+		// let arrNotUpdate = ['#AInstallment_total_money', '#AInstallment_receive_money', '#AInstallment_loan_date', '#AInstallment_frequency', '#AInstallment_start_date'];
+
+		$.ajax({
+			url: '<?= $this->createUrl('aInstallment/renderUpdateForm') ?>',
+			type: 'POST',
+			data: {
+				'installment_id': installment_id,
+				'modal_id': modal_id,
+				'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken ?>',
+			},
+			dataType: 'json',
+			success: function(response) { // Handle the successful response
+				if (response.content != '') {
+					modal_update.find('#body-content').html(response.content);
+				}
+			},
+			error: function(xhr) { // Handle the error
+
+			}
+		});
+
 	}
 </script>

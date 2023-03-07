@@ -1,4 +1,4 @@
-<!-- modal create new -->
+<!-- modal update contract-->
 <?php
 $this->beginWidget(
 	'booster.widgets.TbModal',
@@ -18,11 +18,11 @@ $this->beginWidget(
 <div class="modal-body">
 	<div id="body-content">
 		<?php
-		echo $this->renderPartial('_form', array(
-			'model' => $model,
-			'modalID' => $modalID,
-			'action' => $this->createUrl('aInstallment/create'),
-		));
+		// echo $this->renderPartial('_form', array(
+		// 	'model' => $model,
+		// 	'modalID' => $modalID,
+		// 	'action' => $this->createUrl('aInstallment/update'),
+		// ));
 		?>
 	</div>
 	<div class="space_30"></div>
@@ -58,38 +58,40 @@ $this->beginWidget(
 		});
 	});
 	// xử lý submit form
-	function submitForm(formId) {
+	function submitFormUpdate(formId) {
+
+		let modal_id = '#<?= $modalID ?>';
+		let modal_update = $(modal_id);
 
 		// Get the form data
-		var formData = $(formId).serialize();
+		var formData = modal_update.find(formId).serialize();
 		// disable form
-		$('form *').prop('disabled', true);
+		// $('form *').prop('disabled', true);
 		// Submit the form via Ajax
 		$.ajax({
-			url: '<?= $this->createUrl('aInstallment/create') ?>',
+			url: '<?= $this->createUrl('aInstallment/update') ?>',
 			type: 'POST',
 			data: formData,
 			dataType: 'json',
 			success: function(response) {
 
-				$('form *').prop('disabled', false); // Mở lại form cho phép chỉnh sửa
-
+				// $('form *').prop('disabled', false); // Mở lại form cho phép chỉnh sửa
 				if (response.ok == false && response.error != null) { // Không tạo đơn thành công
 					$('#error_summary').html(response.error); // hiển thị lỗi
 				} else {
 					$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
 					$('#error_summary').html(''); // xóa lỗi trước đó
 					new PNotify({
-						title: 'Tạo hợp đồng thành công!',
-						// text: 'Khách hàng +' + data.customer_name,
-						type: 'info'
+						title: 'Thông báo',
+						text: 'Cập nhật thông tin thành công!',
+						type: 'dark'
 					});
 				}
 				// Handle the successful response
 			},
 			error: function(xhr) {
 				// Handle the error
-				$('form *').prop('disabled', false);
+				// $('form *').prop('disabled', false);
 			}
 		});
 	}

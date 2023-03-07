@@ -33,6 +33,7 @@ $form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 	)); ?>
 	<div class="col-md-3 col-sm-3 col-xs-12">
 		<?php echo $form->textField($model, 'id', array(
+			'readonly' => $isUpdate,
 			'class' => 'form-control',
 		)); ?>
 		<?php echo $form->error($model, 'id'); ?>
@@ -186,7 +187,7 @@ $form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 </div>
 
 <div class="form-groupbuttons pull-right">
-	<?php echo CHtml::button('Lưu lại', ['class' => 'btn btn-primary', 'onclick' => "submitForm('#ainstallment-form')"]); ?>
+	<?php echo CHtml::button('Lưu lại', ['class' => 'btn btn-primary', 'onclick' => "submitFormUpdate('#ainstallment-form')"]); ?>
 	<?php echo CHtml::button('Thoát', ['id' => 'btn-close-modal', 'class' => 'btn btn-danger', 'data-dismiss' => "modal"]); ?>
 </div>
 <div class="clearfix"></div>

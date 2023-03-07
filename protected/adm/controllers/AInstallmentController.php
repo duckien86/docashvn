@@ -63,22 +63,28 @@ class AInstallmentController extends Controller
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id the ID of the model to be updated
      */
-    public function actionUpdate($id)
+    public function actionUpdate()
     {
-        $model = $this->loadModel($id);
-
-        // Uncomment the following line if AJAX validation is needed
-        // $this->performAjaxValidation($model);
+        $response = ['ok' => true, 'data' => null, 'error' => null];
 
         if (isset($_POST['AInstallment'])) {
-            $model->attributes = $_POST['AInstallment'];
-            if ($model->save())
-                $this->redirect(array('view', 'id' => $model->id));
+            $installment_id = isset($_POST['AInstallment']['id']) ? $_POST['AInstallment']['id'] : false;
+            $shop_id =  Yii::app()->user->shop_id;
+            if ($installment_id && $shop_id) {
+                // Khai báo modal id
+                $model = AInstallment::loadContract($installment_id, $shop_id, false, false);
+                $model->attributes = $_POST['AInstallment'];
+                $arrSafeUpdate = [
+                    'customer_name', 'phone_number', 'address', 'personal_id', 'note'
+                ];
+                if (!$model->saveAttributes($arrSafeUpdate)) {
+                    $response['ok'] = false;
+                    $response['error'] = $model->getErrors();
+                }
+            }
         }
 
-        $this->render('update', array(
-            'model' => $model,
-        ));
+        echo CJSON::encode($response);
     }
 
     /**
@@ -260,6 +266,32 @@ class AInstallmentController extends Controller
 
         if ($shopId) {
             $aryReturn['content'] = $this->renderPartial('_top_summary', ['model' => new AInstallment(), 'shop_id' => $shopId], true);
+        }
+
+        echo CJSON::encode($aryReturn);
+    }
+    /**
+     * Ajax request
+     * Khởi tạo dữ liệu form thanh toán 
+     */
+    public function actionRenderUpdateForm()
+    {
+        $aryReturn = ['content' => false];
+        $installmentId = Yii::app()->request->getParam('installment_id', false);
+        $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
+        $model = AInstallment::loadContract($installmentId, $shopId);
+        $model->scenario = 'update';
+        if ($shopId) {
+            $modalUpdateID = 'modal-update-contract';
+            $aryReturn['content'] = $this->renderPartial(
+                '_form_update',
+                [
+                    'model' => $model,
+                    'modalID' => $modalUpdateID,
+                    'action' => $this->createUrl('aInstallment/update'),
+                ],
+                true
+            );
         }
 
         echo CJSON::encode($aryReturn);

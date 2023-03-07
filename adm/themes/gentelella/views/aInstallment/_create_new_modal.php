@@ -80,8 +80,8 @@ $this->beginWidget(
 					$('#ainstallment-form')[0].reset(); // reset lại giá trị trên form
 					$('#error_summary').html(''); // xóa lỗi trước đó
 					new PNotify({
-						title: 'Tạo hợp đồng thành công!',
-						// text: 'Khách hàng +' + data.customer_name,
+						title: 'Thông báo',
+						text: 'Tạo hợp đồng thành công!',
 						type: 'info'
 					});
 				}

@@ -10,6 +10,7 @@ $baseArray = require($base . '/config/main.php');
 // CWebApplication properties can be configured here.
 $admArray = array(
     'basePath'          => $base,
+    'theme'             => 'gentelella',
     'preload'           => array(
         'log',
         'yiibooster',
@@ -150,7 +151,6 @@ $admArray = array(
         ),
     ),
 
-    'theme'             => 'gentelella',
 );
 
 if (!function_exists('w3_array_union_recursive')) {

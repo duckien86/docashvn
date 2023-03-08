@@ -520,7 +520,7 @@ class AInstallment extends Installment
 				'data-toggle' => "modal",
 				'data-target' => "#modal-installment-payment",
 				'class' => 'btn btn-info btn-xs',
-				'onclick' => "initPaymentForm($this->id);"
+				'onclick' => "initPaymentForm($this->id); setTimeout(function(){ $('#tab-close-contract').click(); },100);"
 			]);
 			$htmlOuput = $installmentPayment . $closeContract;
 		}
@@ -605,6 +605,38 @@ class AInstallment extends Installment
 			Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
 		}
 		return false;
+	}
+
+	/**
+	 * Thực hiện giao dịch đóng tiền hoặc hủy đóng tiền
+	 * nộp tiền bát họ || hủy nộp tiền
+	 * @return int - số lượng bản ghi đã thực hiện
+	 */
+	public function doPayment($amountOther = false)
+	{
+		$totalItems = count($this->items);
+		$countItems = 0;
+		if (empty($this->transaction_id)) { // Muốn thực hiện nộp tiền
+			for ($i = 0; $i < $totalItems; $i++) {
+				$item = $this->items[$i];
+
+				if ($item->addPayment($this)) $countItems++;
+
+				if ($this->id == $item->id)
+					return $countItems;
+			}
+		} else { // Muốn hủy giao dịch
+			for (
+				$i = $totalItems - 1;
+				$i >= 0;
+				$i--
+			) {
+				$item = $this->items[$i];
+				if ($item->cancelPayment($this)) $countItems++;
+				if ($this->id == $item->id)
+					return $countItems;
+			}
+		}
 	}
 
 	/**

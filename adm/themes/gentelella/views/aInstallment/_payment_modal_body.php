@@ -1,23 +1,23 @@
 <div class="col-md-12 col-sm-12 col-xs-12" style="padding: unset;">
 	<div class="" role="tabpanel" data-example-id="togglable-tabs">
 		<ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
-			<li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">
+			<li role="presentation" class="active"><a href="#tab_content1" id="tab-do-payment" role="tab" data-toggle="tab" aria-expanded="true">
 					Lịch đóng tiền
 				</a>
 			</li>
-			<li role="presentation" class=""><a href="#tab_content2" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">
+			<li role="presentation" class=""><a href="#tab_content2" role="tab" id="tab-close-contract" data-toggle="tab" aria-expanded="false">
 					Đóng hợp đồng
 				</a>
 			</li>
-			<li role="presentation" class=""><a href="#tab_content3" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
+			<li role="presentation" class=""><a href="#tab_content3" role="tab" id="tab-debt" data-toggle="tab" aria-expanded="false">
 					Nợ
 				</a>
 			</li>
-			<li role="presentation" class=""><a href="#tab_content4" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
+			<li role="presentation" class=""><a href="#tab_content4" role="tab" id="tab-payment-history" data-toggle="tab" aria-expanded="false">
 					Lịch sử
 				</a>
 			</li>
-			<li role="presentation" class=""><a href="#tab_content5" role="tab" id="profile-tab2" data-toggle="tab" aria-expanded="false">
+			<li role="presentation" class=""><a href="#tab_content5" role="tab" id="tab-append-installment" data-toggle="tab" aria-expanded="false">
 					Đảo họ
 				</a>
 			</li>

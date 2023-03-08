@@ -764,22 +764,53 @@ class AInstallment extends Installment
 	}
 
 	/**
-	 * Tính lãi phí đã thu
+	 * Tính lãi phí đã thu trong tháng hiện tại
+	 * Là tiền lãi thực tế đã thu : Tổng tiền khách đã nộp - tiền đưa khách
 	 */
 	public static function loadPaidInterest($shop_id, $format = false)
 	{
 		$command = Yii::app()->db->createCommand();
-		$total = $command->select('sum(t1.amount)')
+		$result = $command->select("t3.id, t3.receive_money, sum(t1.amount) 'current_paid'")
+			->from('tbl_installment_items t')
+			->join('tbl_transactions t1', 't1.id = t.transaction_id')
+			->join('tbl_installment t3', 't3.id = t.installment_id')
+			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
+			// ->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
+			->andWhere("MONTH(t1.create_date) = :current_month", [':current_month' => date('m')])
+			->group('t3.id')
+			->queryAll();
+
+		$total = 0;
+		foreach ($result as $item) {
+			// số tiền đã đóng hiện tại - số tiền đưa khách
+			$interest  = $item['current_paid'] - $item['receive_money'];
+			if ($interest > 0)
+				$total += $interest;
+		}
+		return ($format) ? Utils::numberFormat($total) : $total;
+	}
+
+	/**
+	 * loadTotalPaid : Tính tổng số tiền đã thu được
+	 *
+	 * @param  mixed $shop_id
+	 * @param  mixed $format
+	 * @return void
+	 */
+	public static function loadTotalPaid($shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select("sum(t1.amount) 'current_paid'")
 			->from('tbl_installment_items t')
 			->join('tbl_transactions t1', 't1.id = t.transaction_id')
 			->join('tbl_installment t3', 't3.id = t.installment_id')
 			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
 			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
-			->andWhere("t.payment_date <= :payment_date", [':payment_date' => date('Y/m/d')])
 			->queryScalar();
 
 		return ($format) ? Utils::numberFormat($total) : $total;
 	}
+
 
 	/**
 	 * Tính nợ còn phải thu (bảo gồm tiền chưa nộp hoặc nộp thiếu)

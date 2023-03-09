@@ -64,8 +64,10 @@ class AInstallment extends Installment
 	// Cấu hình nhóm giao dịch : Yii::app()->params['trans_group_id']
 	const TRANS_GRP_CREATE = 'bh_create';
 	const TRANS_GRP_PAID = 'bh_paid';
-	const TRANS_GRP_EXTRA_PAID = 'bh_extra_paid';
+	const TRANS_GRP_EXTRA_PAID = 'bh_extra_paid'; // thanh toán tiền khác
 	const TRANS_GRP_PAID_CANCEL = 'bh_paid_cancel';
+	const TRANS_GRP_INCR_DEBT = 'bh_increase_debt'; // ghi nợ tăng
+	const TRANS_GRP_DECS_DEBT = 'bh_decrease_debt'; // ghi nợ giảm
 
 	// Cấu hình trạng thái hợp đồng
 	/**
@@ -110,6 +112,39 @@ class AInstallment extends Installment
 			array('id, shop_id, create_by, customer_name, phone_number, address, personal_id, total_money, receive_money, loan_date, frequency, is_before, create_date, note, manage_by, status', 'safe', 'on' => 'search'),
 		);
 	}
+
+	/**
+	 * @return array customized attribute labels (name=>label)
+	 */
+	public function attributeLabels()
+	{
+		return array(
+			'id' => 'Mã HĐ',
+			'shop_id' => 'Shop',
+			'create_by' => 'Nhân viên',
+			'customer_name' => 'Tên khách hàng',
+			'phone_number' => 'Điện thoại',
+			'address' => 'Địa chỉ',
+			'personal_id' => 'Số CMND/Hộ Chiếu',
+			'total_money' => 'Bát họ',
+			'receive_money' => 'Tiền đưa khách',
+			'loan_date' => 'Bốc trong vòng',
+			'frequency' => 'Số ngày đóng tiền',
+			'is_before' => 'Thu họ trước',
+			'start_date' => 'Ngày bốc',
+			'create_date' => 'Ngày tạo',
+			'note' => 'Ghi chú',
+			'manage_by' => 'NV thu tiền',
+			'status' => 'Trạng thái',
+			'search_customer_name' => 'Tên khách hàng',
+			'search_loan_date' => 'Thời gian vay',
+			'search_start_date' => 'Từ ngày',
+			'search_end_date' => 'Đến ngày',
+			'search_status' => 'Trạng thái',
+
+		);
+	}
+
 
 	/**
 	 * Set default value by scenario
@@ -359,47 +394,6 @@ class AInstallment extends Installment
 		}
 	}
 
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array();
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'Mã HĐ',
-			'shop_id' => 'Shop',
-			'create_by' => 'Nhân viên',
-			'customer_name' => 'Tên khách hàng',
-			'phone_number' => 'Điện thoại',
-			'address' => 'Địa chỉ',
-			'personal_id' => 'Số CMND/Hộ Chiếu',
-			'total_money' => 'Bát họ',
-			'receive_money' => 'Tiền đưa khách',
-			'loan_date' => 'Bốc trong vòng',
-			'frequency' => 'Số ngày đóng tiền',
-			'is_before' => 'Thu họ trước',
-			'start_date' => 'Ngày bốc',
-			'create_date' => 'Ngày tạo',
-			'note' => 'Ghi chú',
-			'manage_by' => 'NV thu tiền',
-			'status' => 'Trạng thái',
-			'search_customer_name' => 'Tên khách hàng',
-			'search_loan_date' => 'Thời gian vay',
-			'search_start_date' => 'Từ ngày',
-			'search_end_date' => 'Đến ngày',
-			'search_status' => 'Trạng thái',
-
-		);
-	}
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
@@ -612,32 +606,32 @@ class AInstallment extends Installment
 	 * nộp tiền bát họ || hủy nộp tiền
 	 * @return int - số lượng bản ghi đã thực hiện
 	 */
-	public function doPayment($amountOther = false)
-	{
-		$totalItems = count($this->items);
-		$countItems = 0;
-		if (empty($this->transaction_id)) { // Muốn thực hiện nộp tiền
-			for ($i = 0; $i < $totalItems; $i++) {
-				$item = $this->items[$i];
+	// public function doPayment($amountOther = false)
+	// {
+	// 	$totalItems = count($this->items);
+	// 	$countItems = 0;
+	// 	if (empty($this->transaction_id)) { // Muốn thực hiện nộp tiền
+	// 		for ($i = 0; $i < $totalItems; $i++) {
+	// 			$item = $this->items[$i];
 
-				if ($item->addPayment($this)) $countItems++;
+	// 			if ($item->addPayment($this)) $countItems++;
 
-				if ($this->id == $item->id)
-					return $countItems;
-			}
-		} else { // Muốn hủy giao dịch
-			for (
-				$i = $totalItems - 1;
-				$i >= 0;
-				$i--
-			) {
-				$item = $this->items[$i];
-				if ($item->cancelPayment($this)) $countItems++;
-				if ($this->id == $item->id)
-					return $countItems;
-			}
-		}
-	}
+	// 			if ($this->id == $item->id)
+	// 				return $countItems;
+	// 		}
+	// 	} else { // Muốn hủy giao dịch
+	// 		for (
+	// 			$i = $totalItems - 1;
+	// 			$i >= 0;
+	// 			$i--
+	// 		) {
+	// 			$item = $this->items[$i];
+	// 			if ($item->cancelPayment($this)) $countItems++;
+	// 			if ($this->id == $item->id)
+	// 				return $countItems;
+	// 		}
+	// 	}
+	// }
 
 	/**
 	 * Thực hiện giao dịch nộp tiền bổ sung
@@ -661,11 +655,40 @@ class AInstallment extends Installment
 		$transGroupId = AInstallment::TRANS_GRP_EXTRA_PAID;
 		$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][$transGroupId] : $transNote;
 		if ($amount > 0) {
-			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId)) {
+			if ($transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $refId, $transGroupId, $transNote)) {
 				return true;
 			}
 		} else {
-			if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId)) {
+			if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $refId,  $transGroupId, $transNote)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	public function addDebit($debitAmount = 0, $type)
+	{
+		if ($debitAmount == 0) return false;
+
+		$createBy = $this->create_by;
+		$shopId = $this->shop_id;
+		$customerName = $this->customer_name;
+		$refId = $this->id;
+		if ($type == 1) { // tăng nợ
+			$debitAmount = -$debitAmount;
+			$transGroupId = AInstallment::TRANS_GRP_INCR_DEBT;
+		} elseif ($type == 2) { // trả nợ
+			$debitAmount = abs($debitAmount);
+			$transGroupId = AInstallment::TRANS_GRP_DECS_DEBT;
+		}
+		$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][$transGroupId] : $transNote;
+		if ($debitAmount > 0) {
+			if (ATransactions::incomingPayment($createBy, $shopId, $customerName, $debitAmount, $refId,  $transGroupId, $transNote)) {
+				return true;
+			}
+		} else {
+			if (ATransactions::outgoingPayment($createBy, $shopId, $customerName, $debitAmount, $refId,  $transGroupId, $transNote)) {
 				return true;
 			}
 		}
@@ -814,6 +837,10 @@ class AInstallment extends Installment
 
 	/**
 	 * Tính nợ còn phải thu (bảo gồm tiền chưa nộp hoặc nộp thiếu)
+	 *
+	 * @param  mixed $shop_id
+	 * @param  mixed $format
+	 * @return mixed - string | float
 	 */
 	public static function loadDebt($shop_id, $format = false)
 	{
@@ -821,6 +848,31 @@ class AInstallment extends Installment
 		$total = $command->select('sum(t.amount) - sum(COALESCE(t1.amount,0))')
 			->from('tbl_installment_items t')
 			->leftJoin('tbl_transactions t1', 't1.id = t.transaction_id')
+			->join('tbl_installment t3', 't3.id = t.installment_id')
+			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
+			->andWhere("t.payment_date < :payment_date", [':payment_date' => date('Y/m/d')])
+			// ->getText();
+			->queryScalar();
+
+		return ($format) ? Utils::numberFormat($total) : $total;
+	}
+
+
+	/**
+	 * loadDebtByContract : Tính khoản nợ trên 1 hợp đồng. Là tiền phát sinh trong mục ghi nợ
+	 *
+	 * @param  mixed $installmentId
+	 * @param  mixed $shop_id
+	 * @param  mixed $format
+	 * @return void
+	 */
+	public static function loadDebtByContract($installmentId, $shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(t.amount)')
+			->from('tbl_installments t')
+			->leftJoin('tbl_transactions t1', 't1.ref_id = t.id')
 			->join('tbl_installment t3', 't3.id = t.installment_id')
 			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
 			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])

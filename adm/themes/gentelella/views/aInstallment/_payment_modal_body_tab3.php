@@ -16,9 +16,9 @@ if ($installment->overBalance > 0) {
 				Số tiền nợ lần này
 			</div>
 			<?= CHtml::textField('add_debit_1_amount', 0, [
-				'id' => 'add-debit-1-amount',
+				'id' => 'add-debit-amount-1',
 				'class' => 'col-md-6 text-left',
-				'onkeyup' => "formatNumberModalInput('#$modalID','#add-debit-1-amount'); "
+				'onkeyup' => "formatNumberModalInput('#$modalID','#add-debit-amount-1'); "
 			]) ?>
 			<div class="col-md-12 text-right">
 				<?= CHtml::button('Ghi nợ', ['class' => 'btn btn-primary', 'onclick' => "addDebit({$installment->id},1)"]) ?>
@@ -32,9 +32,9 @@ if ($installment->overBalance > 0) {
 				Số tiền trả nợ
 			</div>
 			<?= CHtml::textField('add_debit_2_amount', 0, [
-				'id' => 'add-debit-2-amount',
+				'id' => 'add-debit-amount-2',
 				'class' => 'col-md-6 text-left',
-				'onkeyup' => "formatNumberModalInput('#$modalID','#add-debit-2-amount'); "
+				'onkeyup' => "formatNumberModalInput('#$modalID','#add-debit-amount-2'); "
 			]) ?>
 			<div class="col-md-12 text-right">
 				<?= CHtml::button('Thanh toán', ['class' => 'btn btn-primary ', 'onclick' => "addDebit({$installment->id},2)"]) ?>
@@ -72,19 +72,24 @@ if ($installment->overBalance > 0) {
 	 */
 	function addDebit(installment_id, type = 0) {
 
+		var debit_amount = 0;
 		var current_modal_id = '#<?= $modalID ?>';
-		var extra_money = 0;
 		const current_modal = $(current_modal_id);
 
-		if (is_extra_money == true) {
-			extra_money = current_modal.find('#extra-money').val().replace(/\./g, '');
+		if (type > 0) {
+			debit_amount = current_modal.find('#add-debit-amount-' + type).val().replace(/\./g, '');
+		} else {
+			return false;
 		}
+		if (debit_amount <= 0) return false;
+
 		$.ajax({
-			url: '<?= $this->createUrl('aInstallment/doCloseContract') ?>',
+			url: '<?= $this->createUrl('aInstallment/doAddDebit') ?>',
 			type: 'POST',
 			data: {
 				installment_id: installment_id,
-				extra_money: extra_money,
+				debit_amount: debit_amount,
+				type: type,
 				'YII_CSRF_TOKEN': '<?php echo Yii::app()->request->csrfToken ?>'
 			},
 			dataType: 'json',
@@ -93,14 +98,14 @@ if ($installment->overBalance > 0) {
 				if (response.ok == true) { // Có dữ liệu
 					initPaymentForm(installment_id);
 					new PNotify({
-						title: 'Đóng hợp đồng thành công! ',
-						// text: 'text in body',
+						title: 'Thông báo',
+						text: 'Thực hiện thành công! ',
 						type: 'info'
 					});
 				} else {
 					new PNotify({
-						title: 'Đóng hợp đồng thất bại!',
-						// text: 'text in body',
+						title: 'Thông báo',
+						text: 'Thực hiện không thành công! ',
 						type: 'error'
 					});
 				}

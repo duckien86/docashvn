@@ -119,14 +119,14 @@ if ($installment->overBalance > 0) {
 				if (response.ok == true) { // Có dữ liệu
 					initPaymentForm(installment_id);
 					new PNotify({
-						title: 'Đóng hợp đồng thành công! ',
-						// text: 'text in body',
+						title: 'Thông báo',
+						text: 'Đóng hợp đồng thành công! ',
 						type: 'info'
 					});
 				} else {
 					new PNotify({
-						title: 'Đóng hợp đồng thất bại!',
-						// text: 'text in body',
+						title: 'Thông báo',
+						text: 'Đóng hợp đồng thất bại!',
 						type: 'error'
 					});
 				}

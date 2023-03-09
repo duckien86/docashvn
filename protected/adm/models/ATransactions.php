@@ -116,42 +116,55 @@ class ATransactions extends Transactions
 	/**
 	 * Xử lý giao dịch thu tiền
 	 */
-	public  function incomingPayment($create_by, $shop_id, $customer, $amount, $note,  $group_id, $ref_id)
+	public static  function incomingPayment($create_by, $shop_id, $customer, $amount, $ref_id,  $group_id, $note)
 	{
-		$this->type = self::TYPE_INCOMING;
-		$this->create_by = $create_by;
-		$this->create_date = date('Y-m-d H:i:s');
-		$this->shop_id = $shop_id;
-		$this->customer = $customer;
-		$this->amount = abs($amount);
-		$this->note = $note;
-		$this->group_id = $group_id;
-		$this->ref_id = $ref_id;
-
-		if (!$this->save()) {
+		if ($amount == 0) {
+			Yii::log('Cannot do transaction with amount=' . $amount, CLogger::LEVEL_ERROR);
 			return false;
 		}
-		return true;
+
+		$transaction = new self();
+		$transaction->type = self::TYPE_INCOMING;
+		$transaction->create_by = $create_by;
+		$transaction->create_date = date('Y-m-d H:i:s');
+		$transaction->shop_id = $shop_id;
+		$transaction->customer = $customer;
+		$transaction->amount = abs($amount);
+		$transaction->note = $note;
+		$transaction->group_id = $group_id;
+		$transaction->ref_id = $ref_id;
+
+		if ($transaction->save() == true) {
+			return  $transaction;
+		}
+		return false;
 	}
 
 	/**
 	 * Xử lý giao dịch chi tiền
 	 */
-	public function outgoingPayment($create_by, $shop_id, $customer, $amount, $note, $group_id, $ref_id)
+	public static function outgoingPayment($create_by, $shop_id, $customer, $amount, $ref_id,  $group_id, $note)
 	{
-		$this->type = self::TYPE_OUTGOING;
-		$this->create_by = $create_by;
-		$this->create_date = date('Y-m-d H:i:s');
-		$this->shop_id = $shop_id;
-		$this->customer = $customer;
-		$this->amount = -abs($amount);
-		$this->note = $note;
-		$this->group_id = $group_id;
-		$this->ref_id = $ref_id;
-		if (!$this->save()) {
+		if ($amount == 0) {
+			Yii::log('Cannot do transaction with amount=' . $amount, CLogger::LEVEL_ERROR);
 			return false;
 		}
-		return true;
+
+		$transaction = new self();
+		$transaction->type = self::TYPE_OUTGOING;
+		$transaction->create_by = $create_by;
+		$transaction->create_date = date('Y-m-d H:i:s');
+		$transaction->shop_id = $shop_id;
+		$transaction->customer = $customer;
+		$transaction->amount = -abs($amount);
+		$transaction->note = $note;
+		$transaction->group_id = $group_id;
+		$transaction->ref_id = $ref_id;
+
+		if ($transaction->save() == true) {
+			return  $transaction;
+		}
+		return false;
 	}
 
 	/**

@@ -225,7 +225,7 @@ class AInstallmentController extends Controller
 
     /**
      * Ajax request
-     * Khởi tạo dữ liệu form thanh toán 
+     * Thực hiện thanh toán trả phí
      */
     public function actionDoPayment()
     {
@@ -249,6 +249,37 @@ class AInstallmentController extends Controller
             }
         } else {
             $aryReturn['errMsg'] = "Invalid params ints:$installment_id|item:$item_id|shop:$shop_id";
+        }
+
+        echo CJSON::encode($aryReturn);
+    }
+
+    /**
+     * Ajax request
+     * Thực hiện nghiệp vụ ghi nợ hoặc trả nợ 
+     */
+    public function actionDoAddDebit()
+    {
+        $aryReturn = ['ok' => false, 'errMsg' => ''];
+        $installment_id = Yii::app()->request->getParam('installment_id', false);
+        $type = Yii::app()->request->getParam('type', 0);
+        $debitAmount = Yii::app()->request->getParam('debit_amount', 0);
+        $shop_id =  Yii::app()->user->shop_id;
+
+        if ($installment_id && $shop_id && $type > 0) {
+            $installment = AInstallment::loadContract($installment_id, $shop_id, false, false);
+            if ($installment) {
+                // $item = new AInstallmentItems();
+                if ($installment->addDebit($debitAmount, $type)) {
+                    $aryReturn['ok'] = true;
+                } else {
+                    $aryReturn['errMsg'] = "Transaction fail";
+                }
+            } else {
+                $aryReturn['errMsg'] = "Not found installment:$installment_id";
+            }
+        } else {
+            $aryReturn['errMsg'] = "Invalid params shop_id: $shop_id || " . CJSON::encode($_REQUEST);
         }
 
         echo CJSON::encode($aryReturn);

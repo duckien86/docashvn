@@ -166,18 +166,17 @@ class AInstallmentItems extends InstallmentItems
 		}
 	}
 
-
 	/**
-	 * Thực hiện giao dịch nộp tiền
-	 *
+	 * Thực hiện giao dịch nộp tiền	
 	 * @param  mixed $installment
+	 * @param  mixed $transGroupId - mã nhóm giao dịch
 	 * @param  mixed $transNote
 	 * @param  mixed $amountOther
-	 * @return boolean
+	 * @return void
 	 */
-	public function addPayment($installment, $transNote = '', $amountOther = 0)
+	public function addPayment($installment, $transGroupId = '', $transNote = '', $amountOther = 0)
 	{
-		$transaction = new ATransactions;
+		// $transaction = new ATransactions;
 		$createBy = $installment->create_by;
 		$shopId = $installment->shop_id;
 		$customerName = $installment->customer_name;
@@ -185,14 +184,14 @@ class AInstallmentItems extends InstallmentItems
 		$refId = $installment->id;
 
 		if (empty($this->transaction_id)) {
-			$transGroupId = AInstallment::TRANS_GRP_PAID;
-			$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][AInstallment::TRANS_GRP_PAID] : $transNote;
+			$transGroupId = empty($transGroupId) ? AInstallment::TRANS_GRP_PAID : $transGroupId;
+			$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][$transGroupId] : $transNote;
 			try {
-				$transaction->incomingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId);
+				$transaction = ATransactions::incomingPayment($createBy, $shopId, $customerName, $amount, $refId, $transGroupId, $transNote);
 				$this->transaction_id = $transaction->id;
-
-				$this->save();
-				return true;
+				if ($this->save() == true) {
+					return  true;
+				}
 			} catch (CException $e) {
 				Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
 			}
@@ -201,7 +200,7 @@ class AInstallmentItems extends InstallmentItems
 	}
 
 	/**
-	 * Hủy giao dịch nộp tiền	
+	 * Hủy giao dịch nộp tiền
 	 *
 	 * @param  mixed $installment
 	 * @param  mixed $transNote
@@ -209,22 +208,27 @@ class AInstallmentItems extends InstallmentItems
 	 */
 	public function cancelPayment($installment, $transNote = '')
 	{
-		$transaction = new ATransactions;
 		$createBy = $installment->create_by;
 		$shopId = $installment->shop_id;
 		$customerName = $installment->customer_name;
-		$amount =  $this->amount;
 		$refId = $installment->id;
 
-		if (!empty($this->transaction_id)) {
+		$transaction = ATransactions::model()->findByPk($this->transaction_id);
+
+		if (!empty($transaction)) {
 			$transGroupId = AInstallment::TRANS_GRP_PAID_CANCEL;
 			$transNote = empty($transNote) ? Yii::app()->params['trans_group_id'][$transGroupId] : $transNote;
+			$amount =  $transaction->amount; // lấy số tiền lần trước đã giao dịch
 
-			if ($transaction) {
-				if ($transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $transNote, $transGroupId, $refId)) {
-					$this->transaction_id = '';
-					return $this->save();
+			try {
+				ATransactions::outgoingPayment($createBy, $shopId, $customerName, $amount, $refId, $transGroupId, $transNote);
+
+				$this->transaction_id = '';
+				if ($this->save() == true) {
+					return  true;
 				}
+			} catch (CException $e) {
+				Yii::log($e->getMessage(), CLogger::LEVEL_ERROR);
 			}
 		}
 		return false;

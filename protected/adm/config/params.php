@@ -19,6 +19,8 @@ return array(
         'bh_paid' => 'Đóng tiền họ',
         'bh_extra_paid' => 'Đóng HĐ (Tiền khác)',
         'bh_paid_cancel' => 'Hủy đóng tiền họ',
+        'bh_increase_debt' => 'Nợ lãi họ',
+        'bh_decrease_debt' => 'Trả nợ lãi họ',
         // cầm đồ
         'cd_create' => 'Cầm đồ',
         'cd_paid' => 'Đóng lãi',

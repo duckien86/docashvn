@@ -25,7 +25,7 @@
 				<td align="right" id="tdToDate"><?= $installment->calEndDate() ?></td>
 			</tr>
 			<tr>
-				<td class="header highlight">Tiền thừa</td>
+				<td class="header highlight"><?= ($installment->overBalance > 0) ? 'Tiền thừa' : 'Tiền nợ' ?></td>
 				<td colspan="2" align="right" class="highlight bold" id="tdDebitMoney"><?= $installment->calOverBalance() ?> VNĐ</td>
 			</tr>
 		</tbody>

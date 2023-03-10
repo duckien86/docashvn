@@ -26,7 +26,7 @@ class AInstallment extends Installment
 {
 	// quỹ tiền mặt hiện tại
 	public $currentBalance;
-	// số tiền đóng dư hoặc nợ phát sinh trong các lần đóng tiền
+	// số tiền đóng dư hoặc đóng thiếu trong các lần nộp họ
 	public $overBalance;
 	// Tiền đã đóng
 	public $paidAmount;
@@ -175,7 +175,7 @@ class AInstallment extends Installment
 		$this->overBalance = 0;
 		$this->paidPeriods = 0;
 		$paymentByToday = 0; // số tiền phải trả tới hôm nay
-		$lastTransaction = 0;
+		$lastTransaction = -1;
 		if (empty($this->items)) {
 			$installmentItems = new AInstallmentItems();
 			$this->items = $installmentItems->loadTransaction($this->id);
@@ -188,12 +188,11 @@ class AInstallment extends Installment
 				$lastTransaction = $i;
 			}
 			if (strtotime($item->payment_date) <= strtotime(date('Y/m/d'))) {
-				$paymentByToday += $item->amount;
+				$paymentByToday += $item->amount; // số tiền đã đóng tới hôm nay
 			}
 		}
-
 		// tính toán số tiền còn dư hoặc nợ của khách
-		$this->overBalance = $this->paidAmount - $paymentByToday;
+		$this->loadDebtByContract();
 		// tính toán số tiền còn lại phải trả
 		$this->remainMoney = $this->total_money - $this->paidAmount;
 		// tính toán khoản tiền phải trả 1 ngày
@@ -203,8 +202,9 @@ class AInstallment extends Installment
 			$this->inDebt = true;
 		}
 		// Tính toán ngày nộp tiền tiếp theo
-		$nextTransaction = $lastTransaction > 0 ? $lastTransaction + 1 : $lastTransaction;
+		$nextTransaction = $lastTransaction >= 0 ? $lastTransaction + 1 : $lastTransaction;
 		$this->nextPaidDate = isset($this->items[$nextTransaction]) ? $this->items[$nextTransaction]->payment_date : '';
+
 		// Tính toán số kì chưa nộp tiền
 		$this->remainPeriods = count($this->items) - $this->paidPeriods;
 	}
@@ -545,7 +545,7 @@ class AInstallment extends Installment
 				$transGroupId = self::TRANS_GRP_CREATE;
 				$note = Yii::app()->params['trans_group_id'][self::TRANS_GRP_CREATE];
 
-				if (!$transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $note, $transGroupId, $ref_id)) {
+				if (!$transaction->outgoingPayment($createBy, $shopId, $customerName, $amount, $ref_id, $transGroupId, $note)) {
 					$errors = CHtml::errorSummary($transaction);
 					$this->clearAllData();
 					return false;
@@ -859,7 +859,7 @@ class AInstallment extends Installment
 	}
 
 
-	/**
+	/** 
 	 * loadDebtByContract : Tính khoản nợ trên 1 hợp đồng. Là tiền phát sinh trong mục ghi nợ
 	 *
 	 * @param  mixed $installmentId
@@ -867,19 +867,16 @@ class AInstallment extends Installment
 	 * @param  mixed $format
 	 * @return void
 	 */
-	public static function loadDebtByContract($installmentId, $shop_id, $format = false)
+	public function loadDebtByContract($format = false)
 	{
 		$command = Yii::app()->db->createCommand();
 		$total = $command->select('sum(t.amount)')
-			->from('tbl_installments t')
-			->leftJoin('tbl_transactions t1', 't1.ref_id = t.id')
-			->join('tbl_installment t3', 't3.id = t.installment_id')
-			->where("t3.shop_id =:shop_id", [':shop_id' => $shop_id])
-			->andWhere("t3.status =:status", [':status' => AInstallment::STATUS_OPEN])
-			->andWhere("t.payment_date < :payment_date", [':payment_date' => date('Y/m/d')])
+			->from('tbl_transactions t')
+			->where("t.ref_id =:ref_id", [':ref_id' => $this->id])
+			->andWhere(["IN", "t.group_id", [AInstallment::TRANS_GRP_INCR_DEBT, AInstallment::TRANS_GRP_DECS_DEBT]])
 			// ->getText();
 			->queryScalar();
-
+		$this->overBalance = $total;
 		return ($format) ? Utils::numberFormat($total) : $total;
 	}
 }

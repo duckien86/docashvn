@@ -192,7 +192,7 @@ class AInstallment extends Installment
 			}
 		}
 		// tính toán số tiền còn dư hoặc nợ của khách
-		$this->loadDebtByContract();
+		$this->overBalance = $this->loadDebtByContract();
 		// tính toán số tiền còn lại phải trả
 		$this->remainMoney = $this->total_money - $this->paidAmount;
 		// tính toán khoản tiền phải trả 1 ngày
@@ -203,7 +203,7 @@ class AInstallment extends Installment
 		}
 		// Tính toán ngày nộp tiền tiếp theo
 		$nextTransaction = $lastTransaction >= 0 ? $lastTransaction + 1 : $lastTransaction;
-		$this->nextPaidDate = isset($this->items[$nextTransaction]) ? $this->items[$nextTransaction]->payment_date : '';
+		$this->nextPaidDate = isset($this->items[$nextTransaction]) ? $this->items[$nextTransaction]->payment_date : $this->items[0]->payment_date;
 
 		// Tính toán số kì chưa nộp tiền
 		$this->remainPeriods = count($this->items) - $this->paidPeriods;
@@ -229,7 +229,7 @@ class AInstallment extends Installment
 		$output = '';
 		switch ($this->status) {
 			case self::STATUS_OPEN:
-				if ($this->inDebt) {
+				if ($this->nextPaidDate < date('Y-m-d')) {
 					$output = CHtml::button('Nợ họ', ['class' => 'btn btn-danger btn-md']);
 				} else {
 					$output = 'Đang vay';
@@ -440,10 +440,17 @@ class AInstallment extends Installment
 		return parent::model($className);
 	}
 
-	// public function genContractId()
-	// {
-	// 	$prefix = 'BH';
-	// }
+	/**
+	 * prepareDisplayData : Convert data to display
+	 *
+	 * @return void
+	 */
+	public function prepareDisplayData()
+	{
+		$this->total_money = $this->calTotalMoney();
+		$this->receive_money = $this->calReceiveMoney();
+		$this->start_date = $this->calStartDate();
+	}
 
 	/**
 	 * Tính chi tiết số tiền và ngày phải đóng tiền
@@ -842,7 +849,7 @@ class AInstallment extends Installment
 	 * @param  mixed $format
 	 * @return mixed - string | float
 	 */
-	public static function loadDebt($shop_id, $format = false)
+	public static function loadNotPaid($shop_id, $format = false)
 	{
 		$command = Yii::app()->db->createCommand();
 		$total = $command->select('sum(t.amount) - sum(COALESCE(t1.amount,0))')
@@ -858,14 +865,31 @@ class AInstallment extends Installment
 		return ($format) ? Utils::numberFormat($total) : $total;
 	}
 
+	/**
+	 * Tính số tiền còn phải thu của các hợp đồng (bảo gồm tiền chưa nộp hoặc nộp thiếu)
+	 *
+	 * @param  mixed $shop_id
+	 * @param  mixed $format
+	 * @return mixed - string | float
+	 */
+	public static function loadDebtByShop($shop_id, $format = false)
+	{
+		$command = Yii::app()->db->createCommand();
+		$total = $command->select('sum(t.amount)')
+			->from('tbl_transactions t')
+			->where("t.shop_id =:shop_id", [':shop_id' => $shop_id])
+			->andWhere(["IN", "t.group_id", [AInstallment::TRANS_GRP_INCR_DEBT, AInstallment::TRANS_GRP_DECS_DEBT]])
+			// ->getText();
+			->queryScalar();
+
+		return ($format) ? Utils::numberFormat($total) : $total;
+	}
 
 	/** 
 	 * loadDebtByContract : Tính khoản nợ trên 1 hợp đồng. Là tiền phát sinh trong mục ghi nợ
 	 *
-	 * @param  mixed $installmentId
-	 * @param  mixed $shop_id
-	 * @param  mixed $format
-	 * @return void
+	 * @param  mixed $format - trả về định dạng format
+	 * @return float
 	 */
 	public function loadDebtByContract($format = false)
 	{
@@ -876,7 +900,6 @@ class AInstallment extends Installment
 			->andWhere(["IN", "t.group_id", [AInstallment::TRANS_GRP_INCR_DEBT, AInstallment::TRANS_GRP_DECS_DEBT]])
 			// ->getText();
 			->queryScalar();
-		$this->overBalance = $total;
-		return ($format) ? Utils::numberFormat($total) : $total;
+		return $total;
 	}
 }

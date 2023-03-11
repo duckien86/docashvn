@@ -463,12 +463,29 @@ class Utils
 
     }
 
-    public static function numberFormat($string, $decimals = 0, $dec_sep = ",", $thous_sep = ".")
-    {
-        $ret = '0';
-        if ($string != '')
-            $ret = number_format($string, $decimals, $dec_sep, $thous_sep);
 
-        return $ret;
+    /**
+     * numberFormat
+     *
+     * @param  int,float $number 
+     * @param  mixed $decimals
+     * @param  mixed $dec_sep
+     * @param  mixed $thous_sep
+     * @return string
+     */
+    public static function numberFormat($number, $decimals = 0, $dec_sep = ",", $thous_sep = ".")
+    {
+        $returnStr = $number;
+        if (is_numeric($number))
+            $returnStr = number_format($number, $decimals, $dec_sep, $thous_sep);
+
+        return $returnStr;
+    }
+    public static function str2Number($strNumber)
+    {
+        $returnValue = $strNumber;
+        if (strlen($strNumber) > 0)
+            $returnValue = str_replace(['.', ','], '', $strNumber);
+        return $returnValue;
     }
 }

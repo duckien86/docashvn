@@ -5,7 +5,7 @@ if (!Yii::app()->user->super_admin) {
 	$currentBalance = ATransactions::sumCurrentBalance($shop_id, true);
 	$totalLendingGross = AInstallment::loadTotalLendingGross($shop_id, false);
 	$totalPaid  = AInstallment::loadTotalPaid($shop_id, false);
-	$totalDebt = AInstallment::loadDebt($shop_id, true);
+	$totalDebt = AInstallment::loadDebtByShop($shop_id, true);
 	$paidInterest = AInstallment::loadPaidInterest($shop_id, false);
 	$expectedInterest =  AInstallment::loadExpectedInterest($shop_id, true);
 	$totalLendingNet = Utils::numberFormat($totalLendingGross - $totalPaid);

@@ -158,6 +158,31 @@ class AInstallmentController extends Controller
         echo CJSON::encode($response);
         Yii::app()->end();
     }
+
+    public function actionAppendContract()
+    {
+        $response = ['ok' => true, 'data' => null, 'error' => null];
+        CVarDumper::dump($_POST['AInstallment'], 10, true);
+        die();
+        if (isset($_POST['AInstallment'])) {
+            $installment_id = isset($_POST['AInstallment']['id']) ? $_POST['AInstallment']['id'] : false;
+            $shop_id =  Yii::app()->user->shop_id;
+            if ($installment_id && $shop_id) {
+                // Khai báo modal id
+                $model = AInstallment::loadContract($installment_id, $shop_id, false, false);
+                $model->attributes = $_POST['AInstallment'];
+                $arrSafeUpdate = [
+                    'customer_name', 'phone_number', 'address', 'personal_id', 'note'
+                ];
+                if (!$model->saveAttributes($arrSafeUpdate)) {
+                    $response['ok'] = false;
+                    $response['error'] = $model->getErrors();
+                }
+            }
+        }
+
+        echo CJSON::encode($response);
+    }
     /**
      * Ajax request
      * Khởi tạo dữ liệu form thanh toán 
@@ -312,6 +337,8 @@ class AInstallmentController extends Controller
         $shopId = Yii::app()->request->getParam('shop_id', isset(Yii::app()->user->shop_id) ? Yii::app()->user->shop_id : false);
         $model = AInstallment::loadContract($installmentId, $shopId);
         $model->scenario = 'update';
+        $model->prepareDisplayData(); // convert data to display on form
+
         if ($shopId) {
             $modalUpdateID = 'modal-update-contract';
             $aryReturn['content'] = $this->renderPartial(

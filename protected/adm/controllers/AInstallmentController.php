@@ -159,24 +159,36 @@ class AInstallmentController extends Controller
         Yii::app()->end();
     }
 
+    /**
+     * actionAppendContract
+     *
+     * @return void
+     */
     public function actionAppendContract()
     {
         $response = ['ok' => true, 'data' => null, 'error' => null];
-        CVarDumper::dump($_POST['AInstallment'], 10, true);
-        die();
+
         if (isset($_POST['AInstallment'])) {
             $installment_id = isset($_POST['AInstallment']['id']) ? $_POST['AInstallment']['id'] : false;
             $shop_id =  Yii::app()->user->shop_id;
             if ($installment_id && $shop_id) {
                 // Khai báo modal id
                 $model = AInstallment::loadContract($installment_id, $shop_id, false, false);
-                $model->attributes = $_POST['AInstallment'];
-                $arrSafeUpdate = [
-                    'customer_name', 'phone_number', 'address', 'personal_id', 'note'
-                ];
-                if (!$model->saveAttributes($arrSafeUpdate)) {
+                $modelNew = new AInstallment();
+                $modelNew->scenario = 'createNew';
+
+                $modelNew->attributes = $model->attributes;
+                $modelNew->total_money = $_POST['AInstallment']['total_money'];
+                $modelNew->receive_money = $_POST['AInstallment']['receive_money'];
+                $modelNew->loan_date = $_POST['AInstallment']['loan_date'];
+                $modelNew->frequency = $_POST['AInstallment']['frequency'];
+                $modelNew->start_date = $_POST['AInstallment']['start_date'];
+
+                if ($modelNew->createContract($modelNew->attributes, $errors)) {
+                    $model->closeContract();
+                } else {
                     $response['ok'] = false;
-                    $response['error'] = $model->getErrors();
+                    $response['error'] = $errors;
                 }
             }
         }

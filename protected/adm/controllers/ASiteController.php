@@ -17,6 +17,18 @@ class ASiteController extends Controller
         }
     }
 
+    public function actionResetData()
+    {
+        if (Yii::app()->user->super_admin) {
+
+            AInstallment::model()->deleteAll();
+            AInstallmentItems::model()->deleteAll();
+            $criteria = new CDbCriteria();
+            $criteria->condition = 'id > 1';
+            ATransactions::model()->deleteAll($criteria);
+        }
+    }
+
     public function actions()
     {
         // return external action classes, e.g.:

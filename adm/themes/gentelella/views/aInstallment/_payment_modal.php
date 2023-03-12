@@ -19,21 +19,11 @@ $this->beginWidget(
 <div class="modal-body">
 	<div id="body-content">
 		<div class="row" id="_payment_modal_top_area">
-			<?php
-			// echo $this->renderPartial('_payment_modal_top', array(
-			// 	'model' => $model,
-			// 	'modalID' => $modalID,
-			// ));
-			?>
+			<!-- Payment top content here -->
 		</div>
 		<div class="clearfix"></div>
 		<div class="row" id="_payment_modal_body_area">
-			<?php
-			//  echo $this->renderPartial('_payment_modal_body', array(
-			// 	'model' => $model,
-			// 	'modalID' => $modalID,
-			// ));
-			?>
+			<!-- Payment content here -->
 		</div>
 	</div>
 </div>

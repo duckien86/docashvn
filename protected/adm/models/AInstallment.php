@@ -260,7 +260,12 @@ class AInstallment extends Installment
 	 */
 	public function calOverBalance($displayFormat = true)
 	{
-		$sign = ($this->overBalance > 0) ? ' + ' : ' - ';
+		if ($this->overBalance > 0)
+			$sign = ' + ';
+		elseif ($this->overBalance < 0)
+			$sign = ' - ';
+		else
+			return '';
 		return	$displayFormat ? $sign . Utils::numberFormat(abs($this->overBalance)) : $sign . abs($this->overBalance);
 	}
 
@@ -361,8 +366,8 @@ class AInstallment extends Installment
 		if (parent::beforeValidate()) {
 			switch ($this->scenario) {
 				case 'createNew':
-					$this->total_money = str_replace('.', '', $this->total_money);
-					$this->receive_money = str_replace('.', '', $this->receive_money);
+					$this->total_money = Utils::str2Number($this->total_money);
+					$this->receive_money = Utils::str2Number($this->receive_money);
 					$this->start_date =  Utils::convertDate('d/m/Y', 'Y-m-d', $this->start_date);
 					break;
 
@@ -531,6 +536,10 @@ class AInstallment extends Installment
 
 	/**
 	 * Tạo hợp đồng bát họ
+	 *
+	 * @param  mixed $inputData
+	 * @param  mixed $errors
+	 * @return boolen
 	 */
 	public function createContract($inputData, &$errors)
 	{
@@ -574,7 +583,7 @@ class AInstallment extends Installment
 	 * Thực hiện tất toán các ngày nộp tiền mà chưa có giao dịch
 	 *
 	 * @param  mixed $extraMoney - Tiền điều chỉnh khi thực hiện tất toán hợp đồng
-	 * @return int - số lượng bản ghi đã thực hiện
+	 * @return boolean 
 	 */
 	public function closeContract($extraMoney = 0)
 	{
@@ -901,6 +910,6 @@ class AInstallment extends Installment
 			->andWhere(["IN", "t.group_id", [AInstallment::TRANS_GRP_INCR_DEBT, AInstallment::TRANS_GRP_DECS_DEBT]])
 			// ->getText();
 			->queryScalar();
-		return $total;
+		return !empty($total) ? $total : 0;
 	}
 }

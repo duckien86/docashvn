@@ -22,7 +22,7 @@
 
 		<?php //echo $form->errorSummary($model);
 		?>
-		<div id="error_summary">
+		<div id="error-summary-append-contract">
 			<!-- Hiển thị lỗi tổng hợp ở đây -->
 		</div>
 		<div class="form-group">
@@ -34,6 +34,7 @@
 					<span class="add-on input-group-addon">
 						<i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
 					</span>
+					<?php echo $form->hiddenField($model, 'id', array()); ?>
 					<?php echo $form->textField($model, 'start_date', array(
 						'class' => 'form-control datepicker',
 						'size' => 25,
@@ -145,17 +146,27 @@
 		 * $model->receive_money - $model->remainMoney + $model->overBalance;
 		 */
 		function cal_receive_money() {
-			const modal = $('#<?= $modalID ?>');
+			const currentModal = $('#<?= $modalID ?>');
 
-			let receive_money = parseInt(modal.find('#AInstallment_receive_money').val().replace(/\./g, ""));
+			let receive_money = parseInt(currentModal.find('#AInstallment_receive_money').val().replace(/\./g, ""));
 			let remain_money = parseInt('<?= $model->remainMoney ?>'.replace(/\./g, ""));
-			let over_balance = parseInt('<?= $model->overBalance ?>'.replace(/\./g, ""));
+			let over_balance = '<?= $model->overBalance ?>';
 
-			let sign = (over_balance) > 0 ? ' + ' : ' - ';
-			let i_receive_money_new = receive_money - remain_money + over_balance;
-			let str_receive_money_new = 'Tiền khách nhận về: ' +
-				formatCurrency(receive_money) + ' - ' + formatCurrency(remain_money) + sign + formatCurrency(Math.abs(over_balance)) +
-				' = ' + formatCurrency(i_receive_money_new);
+			over_balance = parseInt(over_balance.replace(/\./g, ""));
+
+			let sign = '';
+			if (over_balance > 0)
+				sign = ' + ';
+			else if (over_balance < 0)
+				sign = ' - ';
+
+			let i_receive_money_new = receive_money - remain_money;
+			let str_receive_money_new = 'Tiền khách nhận về: ' + formatCurrency(receive_money) + ' - ' + formatCurrency(remain_money);
+			if (over_balance != 0) {
+				str_receive_money_new += sign + formatCurrency(Math.abs(over_balance));
+				i_receive_money_new += over_balance;
+			}
+			str_receive_money_new += ' = ' + formatCurrency(i_receive_money_new);
 
 			$('#receive-money-new').html(str_receive_money_new);
 		}
@@ -164,6 +175,8 @@
 
 		// xử lý submit form
 		function append_contract(formId) {
+
+			const currentModal = $('#<?= $modalID ?>');
 
 			// Get the form data
 			var formData = $(formId).serialize();
@@ -180,13 +193,13 @@
 					$('form *').prop('disabled', false); // Mở lại form cho phép chỉnh sửa
 
 					if (response.ok == false && response.error != null) { // Không tạo đơn thành công
-						$('#error_summary').html(response.error); // hiển thị lỗi
+						$('#error-summary-append-contract').html(response.error); // hiển thị lỗi
 					} else {
 						$(formId)[0].reset(); // reset lại giá trị trên form
-						$('#error_summary').html(''); // xóa lỗi trước đó
+						$('#error-summary-append-contract').html(''); // xóa lỗi trước đó
 						new PNotify({
 							title: 'Thông báo',
-							text: 'Tạo hợp đồng thành công!',
+							text: 'Đảo họ thành công!',
 							type: 'info'
 						});
 					}

@@ -8,7 +8,11 @@
 	<div class="col-md-12 col-sm-12 col-xs-12" style="padding: unset;">
 
 		<?php
-		$model->prepareDisplayData(); // convert data to display on form
+		// tính toán phần tiền khách nhận họ mới
+		$receiveMoneyNew = $model->receive_money - $model->remainMoney + $model->overBalance;
+		$strReceiveMoneyNew = "Tiền khách nhận về: {$model->calReceiveMoney()} - {$model->calRemainMoney()} {$model->calOverBalance()} = " . Utils::numberFormat($receiveMoneyNew);
+		// convert data để hiện thị trên form 
+		$model->prepareDisplayData();
 		$form = $this->beginWidget('booster.widgets.TbActiveForm', array(
 			'id' => 'append-contract-form',
 			'action' => $this->createUrl('aInstallment/appendContract'),
@@ -48,8 +52,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12">
 				<?php echo $form->textField($model, 'total_money', array(
 					'class' => 'form-control',
-					'onload' => "formatNumberModalInput('#$modalID','#AInstallment_total_money')",
-					'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_total_money')",
+					'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_total_money');setPaidPerDay('#$modalID','#AInstallment_total_money','#AInstallment_loan_date','#paid-per-day');",
 				)); ?>
 				<?php echo $form->error($model, 'total_money'); ?>
 			</div>
@@ -62,7 +65,7 @@
 			<div class="col-md-4 col-sm-4 col-xs-12">
 				<?php echo $form->textField($model, 'receive_money', array(
 					'class' => 'form-control',
-					'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money');",
+					'onkeyup' => "formatNumberModalInput('#$modalID','#AInstallment_receive_money'); cal_receive_money();",
 					// 'onkeydown' => "setPaidPerDay('#$modalID','#AInstallment_total_money','#AInstallment_loan_date','#paid-per-day')",
 				)); ?>
 				<?php echo $form->error($model, 'receive_money'); ?>
@@ -95,17 +98,15 @@
 			</div>
 			<div class="col-md-5">(VD : 3 ngày đóng 1 lần thì điền số 3 )</div>
 		</div>
+		<div class="space_20"></div>
 		<div class="form-group">
-			<?php echo CHtml::label('Tiền khách nhận về: ', '', array(
-				'class' => 'control-label col-md-3 col-sm-3 col-xs-12 red',
+			<?php
+
+			echo CHtml::label($strReceiveMoneyNew, '', array(
+				'class' => 'col-md-12 col-sm-12 col-xs-12 red bold text-center',
+				'style' => 'font-size:14px',
+				'id' => 'receive-money-new',
 			)); ?>
-			<div class="col-md-8 col-sm-4 col-xs-12 red" id="cal-receive-money">
-				<!-- receive_money - remain_money + debt_amount -->
-				<?php
-				$receiveMoneyNew = Utils::str2Number($model->receive_money) - $model->remainMoney + $model->overBalance;
-				echo "{$model->calReceiveMoney()} - {$model->calRemainMoney()} + {$model->calOverBalance()} = " . Utils::numberFormat($receiveMoneyNew);
-				?>
-			</div>
 		</div>
 
 		<div class="form-groupbuttons text-center">
@@ -139,6 +140,28 @@
 	</div>
 
 	<script>
+		/**
+		 * calReceiveMoneyNew
+		 * $model->receive_money - $model->remainMoney + $model->overBalance;
+		 */
+		function cal_receive_money() {
+			const modal = $('#<?= $modalID ?>');
+
+			let receive_money = parseInt(modal.find('#AInstallment_receive_money').val().replace(/\./g, ""));
+			let remain_money = parseInt('<?= $model->remainMoney ?>'.replace(/\./g, ""));
+			let over_balance = parseInt('<?= $model->overBalance ?>'.replace(/\./g, ""));
+
+			let sign = (over_balance) > 0 ? ' + ' : ' - ';
+			let i_receive_money_new = receive_money - remain_money + over_balance;
+			let str_receive_money_new = 'Tiền khách nhận về: ' +
+				formatCurrency(receive_money) + ' - ' + formatCurrency(remain_money) + sign + formatCurrency(Math.abs(over_balance)) +
+				' = ' + formatCurrency(i_receive_money_new);
+
+			$('#receive-money-new').html(str_receive_money_new);
+		}
+
+
+
 		// xử lý submit form
 		function append_contract(formId) {
 

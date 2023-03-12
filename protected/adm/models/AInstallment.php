@@ -260,7 +260,8 @@ class AInstallment extends Installment
 	 */
 	public function calOverBalance($displayFormat = true)
 	{
-		return	$displayFormat ? Utils::numberFormat($this->overBalance) : $this->overBalance;
+		$sign = ($this->overBalance > 0) ? ' + ' : ' - ';
+		return	$displayFormat ? $sign . Utils::numberFormat(abs($this->overBalance)) : $sign . abs($this->overBalance);
 	}
 
 

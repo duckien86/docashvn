@@ -5,7 +5,10 @@ $this->beginWidget(
 	array(
 		'id' => $modalID,
 		'fade' => true,
-		'options' => ['backdrop' => 'static', 'keyboard' => false],
+		'options' => [
+			// 'backdrop' => 'static',
+			'keyboard' => false
+		],
 		'htmlOptions' => [
 			// 'class' => 'modal-dialog modal-dialog-centered'
 		]
